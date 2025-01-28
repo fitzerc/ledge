@@ -43,11 +43,12 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
-import com.github.fitzerc.ledge.data.entities.Author
 import com.github.fitzerc.ledge.data.entities.BookFormat
 import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.entities.ReadStatus
 import com.github.fitzerc.ledge.data.models.BookAndRelations
+import com.github.fitzerc.ledge.ui.dialogs.AddAuthorDialog
+import com.github.fitzerc.ledge.ui.dialogs.AddBookDialog
 import com.github.fitzerc.ledge.ui.models.BookUiModel
 import com.github.fitzerc.ledge.ui.viewmodels.AddAuthorDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.AddAuthorViewModelFactory
@@ -67,8 +68,12 @@ fun HomeScreen(
 ) {
 
     val vm: HomeScreenViewModel = viewModel(factory = HomeScreenViewModelFactory(ledgeDb))
+
+    val addAuthorDialogVm: AddAuthorDialogViewModel = viewModel(factory = AddAuthorViewModelFactory(ledgeDb))
+    val addBookDialogVm: AddBookDialogViewModel = viewModel(factory = AddBookViewModelFactory(ledgeDb))
+
     var searchQuery: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-    var count = vm.bookCount
+    val count = vm.bookCount
     var showDialog by remember { mutableStateOf(false) }
     var showAddAuthorDialog by remember { mutableStateOf(false) }
     //TODO: how to do this better
@@ -116,10 +121,9 @@ fun HomeScreen(
 
         if (showDialog) {
             AddBookDialog(
-                ledgeDb,
+                vm = addBookDialogVm,
                 onDismiss = { showDialog = false },
                 onSubmit = { b ->
-
                     if (authors.none { a ->
                             b.author.lowercase(Locale.ROOT) == a.author.fullName.lowercase(
                                 Locale.ROOT
@@ -134,7 +138,7 @@ fun HomeScreen(
 
         if (showAddAuthorDialog) {
             AddAuthorDialog(
-                ledgeDb = ledgeDb,
+                vm = addAuthorDialogVm,
                 onDismiss = { showAddAuthorDialog = false },
                 onSubmit = { a -> vm.saveAuthor(a) })
         }
@@ -175,273 +179,4 @@ fun TopSearchBar(searchQuery: TextFieldValue, onQueryChange: (TextFieldValue) ->
             ) { Icon(Icons.Default.Search, "Search Button") }
         }
     })
-}
-
-@Composable
-fun AddAuthorDialog(
-    ledgeDb: LedgeDatabase,
-    onDismiss: () -> Unit,
-    onSubmit: (Author) -> Unit
-) {
-    var fullName by remember { mutableStateOf(TextFieldValue("")) }
-    var selectedGenre by remember { mutableStateOf<Genre?>(null) }
-    var isSubmitEnabled by remember { mutableStateOf(false) }
-
-    val vm: AddAuthorDialogViewModel = viewModel(factory = AddAuthorViewModelFactory(ledgeDb))
-
-    val genres by vm.genres.collectAsState()
-    var genresExpanded by remember { mutableStateOf(false) }
-    val interactionSource = remember { MutableInteractionSource() }
-
-    fun isFormValid(): Boolean = selectedGenre != null && fullName.text.trim().isNotEmpty()
-
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(dismissOnClickOutside = true)
-    ) {
-        Surface(
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.background,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "New Author",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-
-                TextField(
-                    value = fullName,
-                    onValueChange = { newName ->
-                        fullName = newName
-                        isSubmitEnabled = isFormValid()
-                    },
-                    label = { Text("Full Name") })
-
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    TextButton(onClick = { genresExpanded = true }) {
-                        Text(selectedGenre?.name ?: "Select Genre")
-                    }
-                    DropdownMenu(
-                        expanded = genresExpanded,
-                        onDismissRequest = { genresExpanded = false }
-                    ) {
-                        genres.forEach { genre ->
-                            DropdownMenuItem(
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    selectedGenre = genre
-                                    isSubmitEnabled = isFormValid()
-                                    genresExpanded = false
-                                },
-                                text = { Text(genre.name) }
-                            )
-                        }
-                    }
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    TextButton(
-                        onClick = onDismiss
-                    ) {
-                        Text("Cancel")
-                    }
-                    TextButton(enabled = isSubmitEnabled, onClick = {
-                        //Handle form submission onDismiss()
-                        val genre = selectedGenre
-
-                        val author = Author(
-                            fullName = fullName.text,
-                            typicalGenreId = genre?.genreId
-                        )
-
-                        onSubmit(author)
-                        onDismiss()
-                    })
-                    {
-                        Text("Submit")
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun AddBookDialog(
-    ledgeDb: LedgeDatabase,
-    onDismiss: () -> Unit,
-    onSubmit: (BookUiModel) -> Unit
-) {
-    var title by remember { mutableStateOf(TextFieldValue("")) }
-    var author by remember { mutableStateOf(TextFieldValue("")) }
-
-    val vm: AddBookDialogViewModel = viewModel(factory = AddBookViewModelFactory(ledgeDb))
-
-    val genres by vm.genres.collectAsState()
-    val readStatuses by vm.readStatuses.collectAsState()
-    val bookFormats by vm.bookFormats.collectAsState()
-
-    var genresExpanded by remember { mutableStateOf(false) }
-    var readStatusesExpanded by remember { mutableStateOf(false) }
-    var bookFormatsExpanded by remember { mutableStateOf(false) }
-
-    var isSubmitEnabled by remember { mutableStateOf(false) }
-
-    val interactionSource = remember { MutableInteractionSource() }
-
-    var selectedGenre by remember { mutableStateOf<Genre?>(null) }
-    var selectedReadStatus by remember { mutableStateOf<ReadStatus?>(null) }
-    var selectedBookFormat by remember { mutableStateOf<BookFormat?>(null) }
-
-    fun isFormValid(): Boolean {
-        return selectedReadStatus != null &&
-                selectedGenre != null &&
-                selectedBookFormat != null &&
-                title.text.trim().isNotEmpty() &&
-                author.text.trim().isNotEmpty()
-    }
-
-    Dialog(
-        onDismissRequest =
-        onDismiss, properties = DialogProperties(dismissOnClickOutside = true)
-    ) {
-        Surface(
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.background,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "Book Details",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-
-                TextField(
-                    value = title,
-                    onValueChange = { newTitle ->
-                        title = newTitle
-                        isSubmitEnabled = isFormValid()
-                    },
-                    label = { Text("Title") })
-
-                TextField(
-                    value = author,
-                    onValueChange = { authorName ->
-                        author = authorName
-                        isSubmitEnabled = isFormValid()
-                    },
-                    label = { Text("Author") })
-
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    TextButton(onClick = { genresExpanded = true }) {
-                        Text(selectedGenre?.name ?: "Select Genre")
-                    }
-                    DropdownMenu(
-                        expanded = genresExpanded,
-                        onDismissRequest = { genresExpanded = false }
-                    ) {
-                        genres.forEach { genre ->
-                            DropdownMenuItem(
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    selectedGenre = genre
-                                    isSubmitEnabled = isFormValid()
-                                    genresExpanded = false
-                                },
-                                text = { Text(genre.name) }
-                            )
-                        }
-                    }
-                }
-
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    TextButton(onClick = { readStatusesExpanded = true }) {
-                        Text(selectedReadStatus?.value ?: "Select Read Status")
-                    }
-                    DropdownMenu(
-                        expanded = readStatusesExpanded,
-                        onDismissRequest = { readStatusesExpanded = false }
-                    ) {
-                        readStatuses.forEach { readStatus ->
-                            DropdownMenuItem(
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    selectedReadStatus = readStatus
-                                    isSubmitEnabled = isFormValid()
-                                    readStatusesExpanded = false
-                                },
-                                text = { Text(readStatus.value) }
-                            )
-                        }
-                    }
-                }
-
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    TextButton(onClick = { bookFormatsExpanded = true }) {
-                        Text(selectedBookFormat?.format ?: "Select Format")
-                    }
-                    DropdownMenu(
-                        expanded = bookFormatsExpanded,
-                        onDismissRequest = { bookFormatsExpanded = false }
-                    ) {
-                        bookFormats.forEach { bookFormat ->
-                            DropdownMenuItem(
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    selectedBookFormat = bookFormat
-                                    isSubmitEnabled = isFormValid()
-                                    bookFormatsExpanded = false
-                                },
-                                text = { Text(bookFormat.format) }
-                            )
-                        }
-                    }
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    TextButton(
-                        onClick = onDismiss
-                    ) {
-                        Text("Cancel")
-                    }
-                    TextButton(enabled = isSubmitEnabled, onClick = {
-                        //Handle form submission onDismiss()
-                        val genre = selectedGenre
-                        val readStatus = selectedReadStatus
-                        val bookFormat = selectedBookFormat
-
-                        if (readStatus != null && genre != null && bookFormat != null) {
-                            val book = BookUiModel(
-                                title.text,
-                                author.text,
-                                readStatus,
-                                genre,
-                                bookFormat
-                            )
-
-                            onSubmit(book)
-                            onDismiss()
-                        }
-                    })
-                    {
-                        Text("Submit")
-                    }
-                }
-            }
-
-        }
-    }
 }
