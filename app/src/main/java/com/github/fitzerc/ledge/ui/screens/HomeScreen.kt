@@ -99,10 +99,10 @@ fun HomeScreen(
             }
         }
     ) { paddingInner ->
-        Column {
+        Column(modifier = Modifier.padding(paddingInner)) {
             Text(
                 text = "Book Count..." + count.collectAsState().value,
-                modifier = Modifier.padding(paddingInner)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             LazyColumn(
                 modifier = Modifier.padding(16.dp),

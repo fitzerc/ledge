@@ -11,8 +11,10 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,7 +44,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val db = LedgeDatabase.getDatabase(applicationContext)
             
-            LedgeTheme {
+            LedgeTheme(dynamicColor = false) {
                 MainScreen(ledgeDb = db)
             }
         }
@@ -80,6 +82,13 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
             icon = { Icon(item.icon, contentDescription = item.label) },
             label = { Text(item.label) },
             selected = selectedItem == index,
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
+            ),
             onClick = {
                 selectedItem = index
                 navController.navigate(items[index].label.lowercase())
