@@ -34,11 +34,12 @@ import com.github.fitzerc.ledge.ui.viewmodels.AddAuthorViewModelFactory
 
 @Composable
 fun AddAuthorDialog(
+    authorFullName: String?,
     vm: AddAuthorDialogViewModel,
     onDismiss: () -> Unit,
     onSubmit: (Author) -> Unit
 ) {
-    var fullName by remember { mutableStateOf(TextFieldValue("")) }
+    var fullName by remember { mutableStateOf(TextFieldValue(authorFullName ?: "")) }
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
     var isSubmitEnabled by remember { mutableStateOf(false) }
 

@@ -85,6 +85,8 @@ fun HomeScreen(
 
     val authors by vm.authors.collectAsState()
 
+    var authorFullName: String? = null
+
     Scaffold(
         topBar = {
             TopSearchBar(
@@ -129,6 +131,7 @@ fun HomeScreen(
                                 Locale.ROOT
                             )
                         }) {
+                        authorFullName = b.author
                         showAddAuthorDialog = true
                     }
 
@@ -138,8 +141,11 @@ fun HomeScreen(
 
         if (showAddAuthorDialog) {
             AddAuthorDialog(
+                authorFullName = authorFullName,
                 vm = addAuthorDialogVm,
-                onDismiss = { showAddAuthorDialog = false },
+                onDismiss = {
+                    showAddAuthorDialog = false
+                    authorFullName = null },
                 onSubmit = { a -> vm.saveAuthor(a) })
         }
     }
