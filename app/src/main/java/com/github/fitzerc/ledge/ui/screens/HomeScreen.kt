@@ -1,8 +1,6 @@
 package com.github.fitzerc.ledge.ui.screens
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,16 +14,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -38,18 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
-import com.github.fitzerc.ledge.data.entities.BookFormat
-import com.github.fitzerc.ledge.data.entities.Genre
-import com.github.fitzerc.ledge.data.entities.ReadStatus
 import com.github.fitzerc.ledge.data.models.BookAndRelations
 import com.github.fitzerc.ledge.ui.dialogs.AddAuthorDialog
 import com.github.fitzerc.ledge.ui.dialogs.AddBookDialog
 import com.github.fitzerc.ledge.ui.models.BookUiModel
+import com.github.fitzerc.ledge.ui.models.navparams.SearchNavParam
 import com.github.fitzerc.ledge.ui.viewmodels.AddAuthorDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.AddAuthorViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.AddBookDialogViewModel
@@ -78,6 +68,7 @@ fun HomeScreen(
     var showAddAuthorDialog by remember { mutableStateOf(false) }
     //TODO: how to do this better
     var bookUiModel by remember { mutableStateOf<BookUiModel?>(null) }
+    var submittedBookUiModel: BookUiModel? = null
 
     val books by vm.books.collectAsState()
 
@@ -91,7 +82,10 @@ fun HomeScreen(
         topBar = {
             TopSearchBar(
                 searchQuery = searchQuery,
-                onQueryChange = { newQuery -> searchQuery = newQuery })
+                onQueryChange = { newQuery -> searchQuery = newQuery },
+                onSubmit = { query ->
+                    navController.navigate(SearchNavParam(query))
+                })
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -133,9 +127,12 @@ fun HomeScreen(
                         }) {
                         authorFullName = b.author
                         showAddAuthorDialog = true
+                        submittedBookUiModel = BookUiModel(
+                            b.title, b.author, b.readStatus, b.genre, b.bookFormat
+                        )
+                    } else {
+                        vm.saveBookWithAuthorCheck(b)
                     }
-
-                    vm.saveBookWithAuthorCheck(b)
                 })
         }
 
@@ -146,7 +143,16 @@ fun HomeScreen(
                 onDismiss = {
                     showAddAuthorDialog = false
                     authorFullName = null },
-                onSubmit = { a -> vm.saveAuthor(a) })
+                onSubmit = { a ->
+                    vm.saveAuthor(a)
+                    if (submittedBookUiModel == null) {
+                        //TODO: add toaster with error - shouldn't ever happen
+                    }
+                    else {
+                        vm.saveBookWithAuthorCheck(submittedBookUiModel!!)
+                        submittedBookUiModel = null
+                    }
+                })
         }
     }
 }
@@ -167,7 +173,7 @@ fun BookItem(book: BookAndRelations) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopSearchBar(searchQuery: TextFieldValue, onQueryChange: (TextFieldValue) -> Unit) {
+fun TopSearchBar(searchQuery: TextFieldValue, onQueryChange: (TextFieldValue) -> Unit, onSubmit: (String) -> Unit) {
     TopAppBar(title = {
         Row {
             TextField(
@@ -178,7 +184,7 @@ fun TopSearchBar(searchQuery: TextFieldValue, onQueryChange: (TextFieldValue) ->
             )
             Button(
                 shape = RectangleShape,
-                onClick = { /* Handle search request */ },
+                onClick = { onSubmit(searchQuery.text) },
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .height(56.dp),

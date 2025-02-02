@@ -20,4 +20,17 @@ interface BookDao {
     @Transaction
     @Query("SELECT * FROM books ORDER BY title")
     fun getBooksAlphaTitle(): Flow<List<BookAndRelations>>
+
+    @Transaction
+    @Query("SELECT * FROM books WHERE LOWER(title) LIKE '%' || LOWER(:searchTerm) || '%'")
+    fun getBooksByTitle(searchTerm: String): Flow<List<BookAndRelations>>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM books
+        INNER JOIN authors ON books.author_id = authors.author_id
+        WHERE books.title LIKE '%' || :searchTerm || '%'
+        OR authors.full_name LIKE '%' || :searchTerm || '%'
+    """)
+    fun getBooksByTitleOrAuthor(searchTerm: String): Flow<List<BookAndRelations>>
 }

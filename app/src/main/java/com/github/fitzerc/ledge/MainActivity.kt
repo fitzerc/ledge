@@ -26,12 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.github.fitzerc.ledge.data.LedgeDatabase
+import com.github.fitzerc.ledge.ui.models.navparams.SearchNavParam
 import com.github.fitzerc.ledge.ui.screens.BooksScreen
 import com.github.fitzerc.ledge.ui.screens.HomeScreen
 import com.github.fitzerc.ledge.ui.screens.SettingsScreen
@@ -55,28 +56,40 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(ledgeDb: LedgeDatabase) {
     val navController = rememberNavController()
     var searchQuery: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    var selectedItem by remember { mutableIntStateOf(0) }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = { BottomNavBar(navController) },) { paddingInner ->
-        NavHost(navController, startDestination = "home") {
-            composable("home") {
-                HomeScreen(navController, ledgeDb, paddingInner)
-            }
-            composable("books") { BooksScreen(navController, Modifier.padding(paddingInner)) }
-            composable("settings") { SettingsScreen(navController, Modifier.padding(paddingInner)) }
-        }
-    }
-}
-
-@Composable fun BottomNavBar(navController: NavController) {
-    val items = listOf(
+    val navItems = listOf(
         BottomNavItem("Home", Icons.Default.Home),
         BottomNavItem("Books", Icons.AutoMirrored.Default.MenuBook),
         BottomNavItem("Settings", Icons.Default.Menu)
     )
 
-    var selectedItem by remember { mutableIntStateOf(0) }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = { BottomNavBar(navItems, selectedItem, navController) { newIndex ->
+            selectedItem = newIndex
+        }
+        },) { paddingInner ->
+        NavHost(navController, startDestination = "home") {
+            composable("home") {
+                selectedItem = navItems.indexOfFirst { it.label == "Home" }
+                HomeScreen(navController, ledgeDb, paddingInner)
+            }
+            composable("settings") {
+                selectedItem = navItems.indexOfFirst { it.label == "Settings" }
+                SettingsScreen(navController, Modifier.padding(paddingInner))
+            }
+            composable<SearchNavParam> { backStackEntry ->
+                selectedItem = navItems.indexOfFirst { it.label == "Books" }
+                val searchNavParam: SearchNavParam = backStackEntry.toRoute()
+                BooksScreen(navController = navController, searchNavParam = searchNavParam, ledgeDb, modifier = Modifier.padding(paddingInner))
+            }
+        }
+    }
+}
+
+@Composable fun BottomNavBar(items: List<BottomNavItem>, selectedItem: Int, navController: NavController, onSelectedItemChange: (Int) -> Unit) {
+
     NavigationBar {
         items.forEachIndexed { index, item -> NavigationBarItem (
             icon = { Icon(item.icon, contentDescription = item.label) },
@@ -90,8 +103,12 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
                 indicatorColor = MaterialTheme.colorScheme.primaryContainer
             ),
             onClick = {
-                selectedItem = index
-                navController.navigate(items[index].label.lowercase())
+                onSelectedItemChange(index)
+                if (items[index].label.lowercase() == "books") {
+                    navController.navigate(SearchNavParam(""))
+                } else {
+                    navController.navigate(items[index].label.lowercase())
+                }
             } )
         }
     }
