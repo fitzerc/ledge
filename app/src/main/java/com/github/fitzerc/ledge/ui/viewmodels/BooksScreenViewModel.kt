@@ -22,6 +22,90 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
             }
         }
     }
+
+    fun updateResultsWithGenreFilter(
+        searchTerm: String,
+        genreIds: List<Int>,
+    ) {
+        viewModelScope.launch {
+            ledgeDb.bookDao().getBooksByGenre(searchTerm, genreIds).collect() { books ->
+                _searchResults.value = books
+            }
+        }
+    }
+
+    fun updateResultsWithReadStatusFilter(
+        searchTerm: String,
+        readStatusIds: List<Int>,
+    ) {
+        viewModelScope.launch {
+            ledgeDb.bookDao().getBooksByReadStatus(searchTerm, readStatusIds).collect() { books ->
+                _searchResults.value = books
+            }
+        }
+    }
+
+    fun updateResultsWithBookFormatFilter(
+        searchTerm: String,
+        bookFormatIds: List<Int>,
+    ) {
+        viewModelScope.launch {
+            ledgeDb.bookDao().getBooksByBookFormat(searchTerm, bookFormatIds)
+                .collect() { books -> _searchResults.value = books }
+        }
+    }
+
+    fun updateResultsWithGenreBookFormatFilter(
+        searchTerm: String,
+        genreIds: List<Int>,
+        bookFormatIds: List<Int>
+    ) {
+        viewModelScope.launch {
+            ledgeDb.bookDao().getBooksByGenreBookFormat(searchTerm, genreIds, bookFormatIds)
+                .collect() { books -> _searchResults.value = books }
+        }
+    }
+
+    fun updateResultsWithGenreReadStatusFilter(
+        searchTerm: String,
+        genreIds: List<Int>,
+        readStatusIds: List<Int>
+    ) {
+        viewModelScope.launch {
+            ledgeDb.bookDao().getBooksByGenreReadStatus(searchTerm, genreIds, readStatusIds)
+                .collect() { books -> _searchResults.value = books }
+        }
+    }
+
+    fun updateResultsWithReadStatusBookFormatFilter(
+        searchTerm: String,
+        readStatusIds: List<Int>,
+        bookFormatIds: List<Int>
+    ) {
+        viewModelScope.launch {
+            ledgeDb.bookDao().getBooksByReadStatusBookFormat(
+                searchTerm,
+                readStatusIds,
+                bookFormatIds
+            ).collect() { books -> _searchResults.value = books }
+        }
+    }
+
+    fun updateResultsWithGenreReadStatusBookFormatFilter(
+        searchTerm: String,
+        genreIds: List<Int>,
+        readStatusIds: List<Int>,
+        bookFormatIds: List<Int>
+    ) {
+        viewModelScope.launch {
+            ledgeDb.bookDao().getBooksByGenreReadStatusBookFormat(
+                searchTerm,
+                genreIds,
+                readStatusIds,
+                bookFormatIds
+            ).collect() { books -> _searchResults.value = books }
+        }
+    }
 }
 
 class BooksScreenViewModelFactory(private val ledgeDb: LedgeDatabase): ViewModelProvider.Factory {
