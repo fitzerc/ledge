@@ -140,4 +140,16 @@ interface BookDao {
         readStatusIds: List<Int>,
         bookFormatIds: List<Int>
     ) : Flow<List<BookAndRelations>>
+
+    @Transaction
+    @Query("""SELECT b.* FROM books b ORDER BY b.inserted_at DESC LIMIT :limit""")
+    fun getRecentBooksWithLimit(limit: Int): Flow<List<BookAndRelations>>
+
+    @Transaction
+    @Query("""
+        SELECT b.* FROM books b
+        INNER JOIN read_statuses rs ON b.read_status_id = rs.read_status_id
+        WHERE rs.value = :statusValue
+        """)
+    fun getBooksByStatusValue(statusValue: String): Flow<List<BookAndRelations>>
 }

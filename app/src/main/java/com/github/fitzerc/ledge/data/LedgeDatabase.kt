@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.github.fitzerc.ledge.data.converter.RoomTypeConverters
 import com.github.fitzerc.ledge.data.daos.AuthorDao
 import com.github.fitzerc.ledge.data.daos.BookDao
 import com.github.fitzerc.ledge.data.daos.BookFormatDao
@@ -31,6 +33,7 @@ import kotlinx.coroutines.launch
         Series::class],
     version = 1
 )
+@TypeConverters(RoomTypeConverters::class)
 abstract class LedgeDatabase : RoomDatabase() {
     abstract fun readStatusDao(): ReadStatusDao
     abstract fun bookFormatDao(): BookFormatDao

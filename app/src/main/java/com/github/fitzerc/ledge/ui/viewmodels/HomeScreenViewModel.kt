@@ -21,6 +21,12 @@ class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
     private val _books = MutableStateFlow<List<BookAndRelations>>(emptyList())
     val books: StateFlow<List<BookAndRelations>> = _books.asStateFlow()
 
+    private val _recentBooks = MutableStateFlow<List<BookAndRelations>>(emptyList())
+    val recentBooks: StateFlow<List<BookAndRelations>> = _recentBooks.asStateFlow()
+
+    private val _currentlyReading = MutableStateFlow<List<BookAndRelations>>(emptyList())
+    val currentlyReading: StateFlow<List<BookAndRelations>> = _currentlyReading
+
     private val _authors = MutableStateFlow<List<AuthorAndGenre>>(emptyList())
     val authors: StateFlow<List<AuthorAndGenre>> = _authors.asStateFlow()
 
@@ -39,6 +45,18 @@ class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
         viewModelScope.launch {
             ledgeDb.authorDao().getAuthorsAlpha().collect() { authorsList ->
                 _authors.value = authorsList
+            }
+        }
+
+        viewModelScope.launch {
+            ledgeDb.bookDao().getRecentBooksWithLimit(5).collect() { books ->
+                _recentBooks.value = books
+            }
+        }
+
+        viewModelScope.launch {
+            ledgeDb.bookDao().getBooksByStatusValue("Currently Reading").collect() { books ->
+                _currentlyReading.value = books
             }
         }
     }

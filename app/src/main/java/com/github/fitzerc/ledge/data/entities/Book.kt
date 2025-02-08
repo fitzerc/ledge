@@ -3,6 +3,7 @@ package com.github.fitzerc.ledge.data.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(tableName = "books")
 data class Book(
@@ -18,5 +19,7 @@ data class Book(
     @ColumnInfo(name = "book_format_id") val bookFormatId: Int,
     @ColumnInfo(name = "read_status_id") val readStatusId: Int,
     val rating: Int? = null,
-    @ColumnInfo(name = "part_of_series_id") val partOfSeriesId: Int? = null
+    @ColumnInfo(name = "part_of_series_id") val partOfSeriesId: Int? = null,
+    @ColumnInfo(name = "inserted_at") val insertedAt: Date = Date(),
+    @ColumnInfo(name = "updated_at") val updatedAt: Date = Date()
 )

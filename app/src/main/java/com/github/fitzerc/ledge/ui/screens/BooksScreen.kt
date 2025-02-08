@@ -50,7 +50,7 @@ fun BooksScreen(
     val books by vm.searchResults.collectAsState()
 
     val searchFilterDialogVm: SearchFilterDialogViewModel = viewModel(factory = SearchFilterDialogViewModelFactory(ledgeDb))
-
+    var currentFilterValue: SearchFilter by remember { mutableStateOf(SearchFilter()) }
     var showFilterDialog by remember { mutableStateOf(false) }
 
     var searchQuery: TextFieldValue by remember {
@@ -101,9 +101,11 @@ fun BooksScreen(
 
             if (showFilterDialog) {
                 SearchFilterDialog(
-                    searchFilterDialogVm,
+                    vm = searchFilterDialogVm,
+                    searchFilter = currentFilterValue,
                     onDismiss = { showFilterDialog = false },
                     onSubmit = { filter ->
+                        currentFilterValue = filter
                         queryWithFilter(searchQuery.text, filter, vm)
                     })
             }
@@ -154,7 +156,7 @@ fun queryWithFilter(searchTerm: String, filter: SearchFilter, vm: BooksScreenVie
                 searchTerm,
                 filter.bookFormats!!.map { bf -> bf.bookFormatId }
             )
-        else -> false //TODO: handle error
+        else -> vm.getSearchBooks(searchTerm)
     }
 }
 

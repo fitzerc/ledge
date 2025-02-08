@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Label
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -71,6 +72,8 @@ fun HomeScreen(
     var submittedBookUiModel: BookUiModel? = null
 
     val books by vm.books.collectAsState()
+    val recentBooks by vm.recentBooks.collectAsState()
+    val currentlyReading by vm.currentlyReading.collectAsState()
 
     val currentAuthor = vm.author.collectAsState()
 
@@ -105,11 +108,22 @@ fun HomeScreen(
                 text = "Book Count..." + count.collectAsState().value,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
+            Text(text = "Recently Added")
             LazyColumn(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(books) { book ->
+                items(recentBooks) { book ->
+                    BookItem(book = book)
+                }
+            }
+
+            Text(text = "Currently Reading")
+            LazyColumn(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(currentlyReading) { book ->
                     BookItem(book = book)
                 }
             }

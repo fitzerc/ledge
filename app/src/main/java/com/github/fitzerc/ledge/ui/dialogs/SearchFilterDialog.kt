@@ -36,14 +36,15 @@ import com.github.fitzerc.ledge.ui.viewmodels.SearchFilterDialogViewModel
 @Composable
 fun SearchFilterDialog(
     vm: SearchFilterDialogViewModel,
+    searchFilter: SearchFilter,
     onDismiss: () -> Unit,
     onSubmit: (SearchFilter) -> Unit
 ) {
     var isSubmitEnabled by remember { mutableStateOf(true) }
 
-    var selectedGenres by remember { mutableStateOf(listOf<Genre>()) }
-    var selectedReadStatuses by remember { mutableStateOf(listOf<ReadStatus>()) }
-    var selectedBookFormats by remember { mutableStateOf(listOf<BookFormat>()) }
+    var selectedGenres by remember { mutableStateOf(searchFilter.genres ?: emptyList()) }
+    var selectedReadStatuses by remember { mutableStateOf(searchFilter.readStatuses ?: emptyList()) }
+    var selectedBookFormats by remember { mutableStateOf(searchFilter.bookFormats ?: emptyList()) }
 
     val genres by vm.genres.collectAsState()
     val readStatuses by vm.readStatuses.collectAsState()
@@ -68,7 +69,24 @@ fun SearchFilterDialog(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("Filter")
+                Row(horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth())
+                {
+                    Text("Filter")
+
+                    TextButton(
+                        modifier = Modifier.padding(top = 0.dp),
+                        enabled = (selectedGenres.any() || selectedBookFormats.any() || selectedReadStatuses.any()),
+                        onClick = {
+                            selectedGenres = emptyList()
+                            selectedBookFormats = emptyList()
+                            selectedReadStatuses = emptyList()
+                        }
+                    ) {
+                        Text("Clear")
+                    }
+                }
 
                 Box(modifier = Modifier.fillMaxWidth()) {
                     TextButton(onClick = { genresExpanded = true }) {

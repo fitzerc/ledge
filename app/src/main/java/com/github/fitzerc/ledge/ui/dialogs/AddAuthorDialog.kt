@@ -41,13 +41,13 @@ fun AddAuthorDialog(
 ) {
     var fullName by remember { mutableStateOf(TextFieldValue(authorFullName ?: "")) }
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
-    var isSubmitEnabled by remember { mutableStateOf(false) }
+    var isSubmitEnabled by remember { mutableStateOf(true) }
 
     val genres by vm.genres.collectAsState()
     var genresExpanded by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
 
-    fun isFormValid(): Boolean = selectedGenre != null && fullName.text.trim().isNotEmpty()
+    fun isFormValid(): Boolean = fullName.text.trim().isNotEmpty()
 
     Dialog(
         onDismissRequest = onDismiss,
