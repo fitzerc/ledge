@@ -16,7 +16,7 @@ class EditGenreDialogViewModel(private val ledgeDb: LedgeDatabase) : ViewModel()
 
     init {
         viewModelScope.launch {
-            ledgeDb.genreDao().getGenresAlpha().collect() { genres ->
+            ledgeDb.genreDao().getGenresAlpha().collect { genres ->
                 _genres.value = genres
             }
         }

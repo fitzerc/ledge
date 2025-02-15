@@ -32,7 +32,7 @@ fun EditTitleDialog(
         return
     }
 
-    var titleEdit by remember { mutableStateOf(title ?: "") }
+    var titleEdit by remember { mutableStateOf(title) }
     var isSubmitEnabled by remember { mutableStateOf(false) }
 
     Dialog(

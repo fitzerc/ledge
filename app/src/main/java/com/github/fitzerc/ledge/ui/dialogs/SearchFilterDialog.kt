@@ -37,7 +37,7 @@ fun SearchFilterDialog(
     onDismiss: () -> Unit,
     onSubmit: (SearchFilter) -> Unit
 ) {
-    var isSubmitEnabled by remember { mutableStateOf(true) }
+    val isSubmitEnabled by remember { mutableStateOf(true) }
 
     var selectedGenres by remember { mutableStateOf(searchFilter.genres ?: emptyList()) }
     var selectedReadStatuses by remember { mutableStateOf(searchFilter.readStatuses ?: emptyList()) }

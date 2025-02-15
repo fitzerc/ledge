@@ -20,12 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -57,7 +55,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(ledgeDb: LedgeDatabase) {
     val navController = rememberNavController()
-    var searchQuery: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     var selectedItem by remember { mutableIntStateOf(0) }
 
     val navItems = listOf(

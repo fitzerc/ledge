@@ -24,17 +24,17 @@ class SearchFilterDialogViewModel(private val ledgeDb: LedgeDatabase): ViewModel
 
     init {
         viewModelScope.launch {
-            ledgeDb.genreDao().getGenresAlpha().collect() { genresList ->
+            ledgeDb.genreDao().getGenresAlpha().collect { genresList ->
                 _genres.value = genresList
             }
         }
         viewModelScope.launch {
-            ledgeDb.readStatusDao().getReadStatuses().collect() { readStatusList ->
+            ledgeDb.readStatusDao().getReadStatuses().collect { readStatusList ->
                 _readStatuses.value = readStatusList
             }
         }
         viewModelScope.launch {
-            ledgeDb.bookFormatDao().getBookFormatsAlpha().collect() { bookFormatList ->
+            ledgeDb.bookFormatDao().getBookFormatsAlpha().collect { bookFormatList ->
                 _bookFormats.value = bookFormatList
             }
         }

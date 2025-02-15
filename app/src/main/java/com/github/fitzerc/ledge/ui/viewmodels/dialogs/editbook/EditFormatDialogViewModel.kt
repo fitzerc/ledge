@@ -16,7 +16,7 @@ class EditFormatDialogViewModel(private val ledgeDb: LedgeDatabase): ViewModel()
 
     init {
         viewModelScope.launch {
-            ledgeDb.bookFormatDao().getBookFormatsAlpha().collect() { formats ->
+            ledgeDb.bookFormatDao().getBookFormatsAlpha().collect { formats ->
                 _formats.value = formats
             }
         }

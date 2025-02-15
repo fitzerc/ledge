@@ -13,7 +13,7 @@ interface BookFormatDao {
     suspend fun insertBookFormat(bookFormat: BookFormat)
 
     @Delete
-    suspend fun delteBookFormat(bookFormat: BookFormat)
+    suspend fun deleteBookFormat(bookFormat: BookFormat)
 
     @Query("SELECT * FROM book_formats ORDER BY format")
     fun getBookFormatsAlpha(): Flow<List<BookFormat>>

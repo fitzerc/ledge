@@ -45,8 +45,7 @@ import com.github.fitzerc.ledge.ui.viewmodels.dialogs.SearchFilterDialogViewMode
 fun BooksScreen(
     navController: NavController,
     searchNavParam: SearchNavParam,
-    ledgeDb: LedgeDatabase,
-    modifier: Modifier) {
+    ledgeDb: LedgeDatabase) {
 
     val vm: BooksScreenViewModel = viewModel(factory = BooksScreenViewModelFactory(ledgeDb))
     val books by vm.searchResults.collectAsState()

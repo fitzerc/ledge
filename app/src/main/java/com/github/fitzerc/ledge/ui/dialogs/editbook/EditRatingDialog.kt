@@ -43,7 +43,7 @@ fun EditRatingDialog(
 
     var isSubmitEnabled by remember { mutableStateOf(false) }
 
-    var options = 0..5
+    val options = 0..5
 
 
     Dialog(

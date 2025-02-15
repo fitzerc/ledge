@@ -44,10 +44,8 @@ import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.HomeScreenViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.HomeScreenViewModelFactory
-import kotlinx.coroutines.DelicateCoroutinesApi
 import java.util.Locale
 
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -65,14 +63,10 @@ fun HomeScreen(
     var showDialog by remember { mutableStateOf(false) }
     var showAddAuthorDialog by remember { mutableStateOf(false) }
     //TODO: how to do this better
-    var bookUiModel by remember { mutableStateOf<BookUiModel?>(null) }
     var submittedBookUiModel: BookUiModel? = null
 
-    val books by vm.books.collectAsState()
     val recentBooks by vm.recentBooks.collectAsState()
     val currentlyReading by vm.currentlyReading.collectAsState()
-
-    val currentAuthor = vm.author.collectAsState()
 
     val authors by vm.authors.collectAsState()
 

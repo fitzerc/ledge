@@ -21,7 +21,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -173,7 +172,7 @@ fun BookViewScreen(
                     ) {
                         Button(
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = androidx.compose.ui.graphics.Color.Transparent
+                                containerColor = Color.Transparent
                             ),
                             contentPadding = PaddingValues(0.dp),
                             onClick = { showInfoPopup = true }
@@ -216,9 +215,9 @@ fun BookViewScreen(
                     EditTitleDialog(
                         title = book?.book?.title,
                         onDismiss = { showEditTitleDialog = false },
-                        onSubmit = { newtitle ->
-                            if (newtitle.isNotEmpty()) {
-                                book?.book?.copy(title = newtitle)?.let { vm.updateBook(it) }
+                        onSubmit = { newTitle ->
+                            if (newTitle.isNotEmpty()) {
+                                book?.book?.copy(title = newTitle)?.let { vm.updateBook(it) }
                                     ?: println("copy failed on title save") //TODO: toast?
 
                                 vm.refreshBook(book?.book?.bookId!!)

@@ -15,11 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
-    private val _bookCount = MutableStateFlow<Int>(-1)
+    private val _bookCount = MutableStateFlow(-1)
     val bookCount: StateFlow<Int> = _bookCount.asStateFlow()
-
-    private val _books = MutableStateFlow<List<BookAndRelations>>(emptyList())
-    val books: StateFlow<List<BookAndRelations>> = _books.asStateFlow()
 
     private val _recentBooks = MutableStateFlow<List<BookAndRelations>>(emptyList())
     val recentBooks: StateFlow<List<BookAndRelations>> = _recentBooks.asStateFlow()
@@ -36,26 +33,19 @@ class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
 
     init {
         viewModelScope.launch {
-            ledgeDb.bookDao().getBooksAlphaTitle().collect() { books ->
-                _books.value = books
-                _bookCount.value = books.count()
-            }
-        }
-
-        viewModelScope.launch {
-            ledgeDb.authorDao().getAuthorsAlpha().collect() { authorsList ->
+            ledgeDb.authorDao().getAuthorsAlpha().collect { authorsList ->
                 _authors.value = authorsList
             }
         }
 
         viewModelScope.launch {
-            ledgeDb.bookDao().getRecentBooksWithLimit(5).collect() { books ->
+            ledgeDb.bookDao().getRecentBooksWithLimit(5).collect { books ->
                 _recentBooks.value = books
             }
         }
 
         viewModelScope.launch {
-            ledgeDb.bookDao().getBooksByStatusValue("Currently Reading").collect() { books ->
+            ledgeDb.bookDao().getBooksByStatusValue("Currently Reading").collect { books ->
                 _currentlyReading.value = books
             }
         }
@@ -70,7 +60,7 @@ class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
             } else {
                 val book = Book(
                     title = bookUiModel.title,
-                    authorId = author.author.authorId ?: 0,
+                    authorId = author.author.authorId,
                     genreId = bookUiModel.genre.genreId,
                     bookFormatId = bookUiModel.bookFormat.bookFormatId,
                     readStatusId = bookUiModel.readStatus.readStatusId)
@@ -84,16 +74,6 @@ class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
         viewModelScope.launch {
             ledgeDb.authorDao().insertAuthor(author)
         }
-    }
-
-    fun getAuthorByNameAndUpdateCurrentAuthor(fullName: String) {
-        viewModelScope.launch {
-            author.value = getAuthorByName(fullName)
-        }
-    }
-
-    suspend fun getAuthorByName(fullName: String): AuthorAndGenre? {
-        return ledgeDb.authorDao().getAuthorByName(fullName)
     }
 }
 

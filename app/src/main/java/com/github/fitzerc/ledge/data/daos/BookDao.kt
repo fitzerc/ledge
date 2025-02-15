@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.github.fitzerc.ledge.data.entities.Book
-import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.models.BookAndRelations
 import kotlinx.coroutines.flow.Flow
 

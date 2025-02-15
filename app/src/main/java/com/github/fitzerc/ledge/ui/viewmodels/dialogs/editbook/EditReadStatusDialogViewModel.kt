@@ -16,7 +16,7 @@ class EditReadStatusDialogViewModel(ledgeDb: LedgeDatabase): ViewModel() {
 
     init {
         viewModelScope.launch {
-            ledgeDb.readStatusDao().getReadStatuses().collect() { statuses ->
+            ledgeDb.readStatusDao().getReadStatuses().collect { statuses ->
                 _readStatuses.value = statuses
             }
         }

@@ -3,7 +3,6 @@ package com.github.fitzerc.ledge.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.data.entities.Book
 import com.github.fitzerc.ledge.data.models.AuthorAndGenre
@@ -13,13 +12,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class BookViewScreenViewModel(val bookId: Int, private val ledgeDb: LedgeDatabase): ViewModel() {
+class BookViewScreenViewModel(
+    private val bookId: Int,
+    private val ledgeDb: LedgeDatabase
+): ViewModel() {
     private val _book = MutableStateFlow<BookAndRelations?>(null)
     val book: StateFlow<BookAndRelations?> = _book.asStateFlow()
 
     init {
         viewModelScope.launch {
-            ledgeDb.bookDao().getBookById(bookId).collect() { book ->
+            ledgeDb.bookDao().getBookById(bookId).collect { book ->
                 _book.value = book
             }
         }
@@ -27,7 +29,7 @@ class BookViewScreenViewModel(val bookId: Int, private val ledgeDb: LedgeDatabas
 
     fun refreshBook(bookId: Int) {
         viewModelScope.launch {
-            ledgeDb.bookDao().getBookById(bookId).collect() { book ->
+            ledgeDb.bookDao().getBookById(bookId).collect { book ->
                 _book.value = book
             }
         }

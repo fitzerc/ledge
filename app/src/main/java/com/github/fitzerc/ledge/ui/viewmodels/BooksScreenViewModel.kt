@@ -17,7 +17,7 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
     fun getSearchBooks(searchParam: String) {
         viewModelScope.launch {
             val query = if (searchParam == "*") "" else searchParam
-            ledgeDb.bookDao().getBooksByTitleOrAuthor(query).collect() { books ->
+            ledgeDb.bookDao().getBooksByTitleOrAuthor(query).collect { books ->
                 _searchResults.value = books
             }
         }
@@ -28,7 +28,7 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
         genreIds: List<Int>,
     ) {
         viewModelScope.launch {
-            ledgeDb.bookDao().getBooksByGenre(searchTerm, genreIds).collect() { books ->
+            ledgeDb.bookDao().getBooksByGenre(searchTerm, genreIds).collect { books ->
                 _searchResults.value = books
             }
         }
@@ -39,7 +39,7 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
         readStatusIds: List<Int>,
     ) {
         viewModelScope.launch {
-            ledgeDb.bookDao().getBooksByReadStatus(searchTerm, readStatusIds).collect() { books ->
+            ledgeDb.bookDao().getBooksByReadStatus(searchTerm, readStatusIds).collect { books ->
                 _searchResults.value = books
             }
         }
@@ -51,7 +51,7 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
     ) {
         viewModelScope.launch {
             ledgeDb.bookDao().getBooksByBookFormat(searchTerm, bookFormatIds)
-                .collect() { books -> _searchResults.value = books }
+                .collect { books -> _searchResults.value = books }
         }
     }
 
@@ -62,7 +62,7 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
     ) {
         viewModelScope.launch {
             ledgeDb.bookDao().getBooksByGenreBookFormat(searchTerm, genreIds, bookFormatIds)
-                .collect() { books -> _searchResults.value = books }
+                .collect { books -> _searchResults.value = books }
         }
     }
 
@@ -73,7 +73,7 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
     ) {
         viewModelScope.launch {
             ledgeDb.bookDao().getBooksByGenreReadStatus(searchTerm, genreIds, readStatusIds)
-                .collect() { books -> _searchResults.value = books }
+                .collect { books -> _searchResults.value = books }
         }
     }
 
@@ -87,7 +87,7 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
                 searchTerm,
                 readStatusIds,
                 bookFormatIds
-            ).collect() { books -> _searchResults.value = books }
+            ).collect { books -> _searchResults.value = books }
         }
     }
 
@@ -103,7 +103,7 @@ class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
                 genreIds,
                 readStatusIds,
                 bookFormatIds
-            ).collect() { books -> _searchResults.value = books }
+            ).collect { books -> _searchResults.value = books }
         }
     }
 }
