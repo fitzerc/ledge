@@ -32,7 +32,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.github.fitzerc.ledge.data.LedgeDatabase
+import com.github.fitzerc.ledge.ui.models.navparams.BookNavParam
 import com.github.fitzerc.ledge.ui.models.navparams.SearchNavParam
+import com.github.fitzerc.ledge.ui.screens.BookViewScreen
 import com.github.fitzerc.ledge.ui.screens.BooksScreen
 import com.github.fitzerc.ledge.ui.screens.HomeScreen
 import com.github.fitzerc.ledge.ui.screens.SettingsScreen
@@ -83,6 +85,10 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
                 selectedItem = navItems.indexOfFirst { it.label == "Books" }
                 val searchNavParam: SearchNavParam = backStackEntry.toRoute()
                 BooksScreen(navController = navController, searchNavParam = searchNavParam, ledgeDb, modifier = Modifier.padding(paddingInner))
+            }
+            composable<BookNavParam> { navBackStackEntry ->
+                val bookNavParam: BookNavParam = navBackStackEntry.toRoute()
+                BookViewScreen(bookNavParam = bookNavParam, ledgeDb, navController)
             }
         }
     }

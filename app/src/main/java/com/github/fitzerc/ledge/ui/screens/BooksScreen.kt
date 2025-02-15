@@ -31,13 +31,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
+import com.github.fitzerc.ledge.ui.components.BookCard
 import com.github.fitzerc.ledge.ui.dialogs.SearchFilterDialog
 import com.github.fitzerc.ledge.ui.models.SearchFilter
+import com.github.fitzerc.ledge.ui.models.navparams.BookNavParam
 import com.github.fitzerc.ledge.ui.models.navparams.SearchNavParam
 import com.github.fitzerc.ledge.ui.viewmodels.BooksScreenViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.BooksScreenViewModelFactory
-import com.github.fitzerc.ledge.ui.viewmodels.SearchFilterDialogViewModel
-import com.github.fitzerc.ledge.ui.viewmodels.SearchFilterDialogViewModelFactory
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.SearchFilterDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.SearchFilterDialogViewModelFactory
 
 @Composable
 fun BooksScreen(
@@ -95,7 +97,9 @@ fun BooksScreen(
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 items(books) { book ->
-                    BookItem(book)
+                    BookCard(book, onClick = {
+                        navController.navigate(BookNavParam(book.book.bookId))
+                    })
                 }
             }
 

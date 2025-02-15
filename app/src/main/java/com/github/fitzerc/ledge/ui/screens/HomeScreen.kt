@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,12 +12,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Label
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -36,15 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
-import com.github.fitzerc.ledge.data.models.BookAndRelations
+import com.github.fitzerc.ledge.ui.components.BookCard
 import com.github.fitzerc.ledge.ui.dialogs.AddAuthorDialog
 import com.github.fitzerc.ledge.ui.dialogs.AddBookDialog
 import com.github.fitzerc.ledge.ui.models.BookUiModel
+import com.github.fitzerc.ledge.ui.models.navparams.BookNavParam
 import com.github.fitzerc.ledge.ui.models.navparams.SearchNavParam
-import com.github.fitzerc.ledge.ui.viewmodels.AddAuthorDialogViewModel
-import com.github.fitzerc.ledge.ui.viewmodels.AddAuthorViewModelFactory
-import com.github.fitzerc.ledge.ui.viewmodels.AddBookDialogViewModel
-import com.github.fitzerc.ledge.ui.viewmodels.AddBookViewModelFactory
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddAuthorDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddAuthorViewModelFactory
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.HomeScreenViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.HomeScreenViewModelFactory
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -114,7 +111,9 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(recentBooks) { book ->
-                    BookItem(book = book)
+                    BookCard(book = book, onClick = {
+                        navController.navigate(BookNavParam(book.book.bookId))
+                    })
                 }
             }
 
@@ -124,7 +123,9 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(currentlyReading) { book ->
-                    BookItem(book = book)
+                    BookCard(book = book, onClick = {
+                        navController.navigate(BookNavParam(book.book.bookId))
+                    })
                 }
             }
         }
@@ -167,20 +168,6 @@ fun HomeScreen(
                         submittedBookUiModel = null
                     }
                 })
-        }
-    }
-}
-
-@Composable
-fun BookItem(book: BookAndRelations) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(text = book.book.title, style = MaterialTheme.typography.headlineMedium)
-            Text(text = "Author: ${book.author.fullName}", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

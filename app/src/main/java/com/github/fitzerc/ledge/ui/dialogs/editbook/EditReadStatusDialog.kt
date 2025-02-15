@@ -1,4 +1,4 @@
-package com.github.fitzerc.ledge.ui.dialogs
+package com.github.fitzerc.ledge.ui.dialogs.editbook
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -13,38 +13,39 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.github.fitzerc.ledge.data.entities.Author
-import com.github.fitzerc.ledge.data.entities.Genre
-import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddAuthorDialogViewModel
+import com.github.fitzerc.ledge.data.entities.ReadStatus
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditReadStatusDialogViewModel
 
 @Composable
-fun AddAuthorDialog(
-    authorFullName: String?,
-    vm: AddAuthorDialogViewModel,
+fun EditReadStatusDialog(
+    currentStatus: ReadStatus?,
+    vm: EditReadStatusDialogViewModel,
     onDismiss: () -> Unit,
-    onSubmit: (Author) -> Unit
+    onSubmit: (newStatus: ReadStatus) -> Unit
 ) {
-    var fullName by remember { mutableStateOf(TextFieldValue(authorFullName ?: "")) }
-    var selectedGenre by remember { mutableStateOf<Genre?>(null) }
-    var isSubmitEnabled by remember { mutableStateOf(true) }
+    if (currentStatus == null) {
+        onDismiss()
+        return
+    }
 
-    val genres by vm.genres.collectAsState()
-    var genresExpanded by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
 
-    fun isFormValid(): Boolean = fullName.text.trim().isNotEmpty()
+    var statusesExpanded by remember { mutableStateOf(false) }
+    var statusEdit by remember { mutableStateOf(currentStatus) }
+    var isSubmitEnabled by remember { mutableStateOf(false) }
+
+    val statuses: List<ReadStatus> by vm.readStatuses.collectAsState()
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -60,40 +61,34 @@ fun AddAuthorDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "New Author",
+                    text = "Edit Read Status",
                     style = MaterialTheme.typography.headlineMedium
                 )
 
-                TextField(
-                    value = fullName,
-                    onValueChange = { newName ->
-                        fullName = newName
-                        isSubmitEnabled = isFormValid()
-                    },
-                    label = { Text("Full Name") })
-
                 Box(modifier = Modifier.fillMaxWidth()) {
-                    TextButton(onClick = { genresExpanded = true }) {
-                        Text(selectedGenre?.name ?: "Select Genre (Optional)")
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Read Status:")
+                        TextButton(onClick = { statusesExpanded = true }) {
+                            Text(statusEdit.value)
+                        }
                     }
                     DropdownMenu(
-                        expanded = genresExpanded,
-                        onDismissRequest = { genresExpanded = false }
+                        expanded = statusesExpanded,
+                        onDismissRequest = { statusesExpanded = false }
                     ) {
-                        genres.forEach { genre ->
+                        statuses.forEach { status ->
                             DropdownMenuItem(
                                 interactionSource = interactionSource,
+                                text = { Text(text = status.value) },
                                 onClick = {
-                                    selectedGenre = genre
-                                    isSubmitEnabled = isFormValid()
-                                    genresExpanded = false
-                                },
-                                text = { Text(genre.name) }
+                                    isSubmitEnabled = status != statusEdit
+                                    statusEdit = status
+                                    statusesExpanded = false
+                                }
                             )
                         }
                     }
                 }
-
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
@@ -104,19 +99,11 @@ fun AddAuthorDialog(
                         Text("Cancel")
                     }
                     TextButton(enabled = isSubmitEnabled, onClick = {
-                        //Handle form submission onDismiss()
-                        val genre = selectedGenre
-
-                        val author = Author(
-                            fullName = fullName.text,
-                            typicalGenreId = genre?.genreId
-                        )
-
-                        onSubmit(author)
+                        onSubmit(statusEdit)
                         onDismiss()
                     })
                     {
-                        Text("Submit")
+                        Text("Save")
                     }
                 }
             }

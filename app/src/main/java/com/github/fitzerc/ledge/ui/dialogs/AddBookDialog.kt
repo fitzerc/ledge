@@ -29,7 +29,7 @@ import com.github.fitzerc.ledge.data.entities.BookFormat
 import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.entities.ReadStatus
 import com.github.fitzerc.ledge.ui.models.BookUiModel
-import com.github.fitzerc.ledge.ui.viewmodels.AddBookDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookDialogViewModel
 
 @Composable
 fun AddBookDialog(

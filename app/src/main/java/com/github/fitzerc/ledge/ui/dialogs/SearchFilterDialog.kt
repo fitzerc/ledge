@@ -27,11 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.github.fitzerc.ledge.data.entities.BookFormat
-import com.github.fitzerc.ledge.data.entities.Genre
-import com.github.fitzerc.ledge.data.entities.ReadStatus
 import com.github.fitzerc.ledge.ui.models.SearchFilter
-import com.github.fitzerc.ledge.ui.viewmodels.SearchFilterDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.SearchFilterDialogViewModel
 
 @Composable
 fun SearchFilterDialog(

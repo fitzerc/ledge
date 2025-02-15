@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.github.fitzerc.ledge.data.entities.Book
 import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.models.BookAndRelations
@@ -15,8 +16,15 @@ interface BookDao {
     @Insert
     suspend fun insertBook(book: Book)
 
+    @Update
+    suspend fun updateBook(book: Book)
+
     @Delete
     suspend fun deleteBook(book: Book)
+
+    @Transaction
+    @Query("SELECT * FROM books WHERE book_id = :id LIMIT 1")
+    fun getBookById(id: Int): Flow<BookAndRelations>
 
     @Transaction
     @Query("SELECT * FROM books ORDER BY title")
