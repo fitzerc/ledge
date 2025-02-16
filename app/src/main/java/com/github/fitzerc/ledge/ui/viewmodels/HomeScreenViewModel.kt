@@ -14,7 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
+class HomeScreenViewModel(
+    private val ledgeDb: LedgeDatabase,
+    private val toastError: (message: String) -> Unit
+): ViewModel() {
     private val _bookCount = MutableStateFlow(-1)
     val bookCount: StateFlow<Int> = _bookCount.asStateFlow()
 
@@ -56,7 +59,7 @@ class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
             val author = ledgeDb.authorDao().getAuthorByName(bookUiModel.author)
 
             if (author == null) {
-                //TODO: handle no author case - should never hit
+                toastError("somehow the author was lost - unable to save book")
             } else {
                 val book = Book(
                     title = bookUiModel.title,
@@ -77,12 +80,15 @@ class HomeScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
     }
 }
 
-class HomeScreenViewModelFactory(private val ledgeDb: LedgeDatabase)
+class HomeScreenViewModelFactory(
+    private val ledgeDb: LedgeDatabase,
+    private val toastError: (message: String) -> Unit
+)
     : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeScreenViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return HomeScreenViewModel(ledgeDb) as T
+            return HomeScreenViewModel(ledgeDb, toastError) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

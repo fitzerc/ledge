@@ -32,16 +32,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
+import com.github.fitzerc.ledge.ui.ToastError
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditAuthorDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditFormatDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditGenreDialog
@@ -74,14 +77,27 @@ fun BookViewScreen(
     var showEditStatusDialog by remember { mutableStateOf(false) }
     var showEditLocationDialog by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     var showInfoPopup by remember { mutableStateOf(false) }
 
     if (bookNavParam.bookId == null) {
-        throw Exception("Book Nav Param Empty!!")
+        ToastError(
+            "Book Id missing - unable to display book",
+            context,
+            coroutineScope
+        )
+
+        return
     }
 
     val vm: BookViewScreenViewModel = viewModel(
-        factory = BookViewScreenViewModelFactory(ledgeDb, bookNavParam.bookId)
+        factory = BookViewScreenViewModelFactory(
+            ledgeDb = ledgeDb,
+            bookId = bookNavParam.bookId,
+            toastError = { ToastError(it, context, coroutineScope) }
+        )
     )
     val book by vm.book.collectAsState()
 
@@ -111,7 +127,11 @@ fun BookViewScreen(
                         book?.book?.let {
                             vm.deleteBook(it)
                             navController.navigate("home")
-                        }
+                        } ?: ToastError(
+                            "Internal error related to state of book - unable to delete",
+                            context,
+                            coroutineScope
+                        )
                     }) {
                         Icon(Icons.Default.Delete, contentDescription = "Delete Book Button")
                     }
@@ -218,11 +238,23 @@ fun BookViewScreen(
                         onSubmit = { newTitle ->
                             if (newTitle.isNotEmpty()) {
                                 book?.book?.copy(title = newTitle)?.let { vm.updateBook(it) }
-                                    ?: println("copy failed on title save") //TODO: toast?
+                                    ?: {
+                                        println("copy failed on title save")
+                                        ToastError(
+                                            "copy failed - unable to update title",
+                                            context,
+                                            coroutineScope
+                                        )
+                                    }
 
                                 vm.refreshBook(book?.book?.bookId!!)
                             } else {
-                                //TODO: toast - new title cannot be empty
+                                println("empty string on title save")
+                                ToastError(
+                                    "title is somehow empty - unable to update title",
+                                    context,
+                                    coroutineScope
+                                )
                             }
                         }
                     )
@@ -233,13 +265,16 @@ fun BookViewScreen(
                         author = book?.author,
                         onDismiss = { showEditAuthorDialog = false },
                         onSubmit = { aFullName ->
-                            if (book == null) {
-                                throw Exception("book cannot be null!!")
-                            }
-
-                            vm.updateBookAuthor(book?.book!!, aFullName)
-                            vm.refreshBook(book?.book?.bookId!!)
-                        })
+                                book?.book?.let {
+                                    vm.updateBookAuthor(it, aFullName)
+                                    vm.refreshBook(it.bookId)
+                                } ?: ToastError(
+                                    "book is somehow null - unable to update author",
+                                    context,
+                                    coroutineScope
+                                )
+                        }
+                    )
                 }
 
                 if (showEditRatingDialog) {
@@ -248,7 +283,14 @@ fun BookViewScreen(
                         onDismiss = { showEditRatingDialog = false },
                         onSubmit = { rating ->
                             book?.book?.copy(rating = rating)?.let { vm.updateBook(it) }
-                                ?: println("copy failed on rating save") //TODO: toast?
+                                ?: {
+                                    println("copy failed on rating save")
+                                    ToastError(
+                                        "copy failed - unable to update rating",
+                                        context,
+                                        coroutineScope
+                                    )
+                                }
 
                             vm.refreshBook(book?.book?.bookId!!)
                         }
@@ -262,7 +304,14 @@ fun BookViewScreen(
                         onDismiss = { showEditFormatDialog = false },
                         onSubmit = { format ->
                             book?.book?.copy(bookFormatId = format.bookFormatId)?.let { vm.updateBook(it) }
-                                ?: println("copy failed on book format save") //TODO: toast?
+                                ?: {
+                                    println("copy failed on book format save")
+                                    ToastError(
+                                        "copy failed - unable to update book format",
+                                        context,
+                                        coroutineScope
+                                    )
+                                }
 
                             vm.refreshBook(book?.book?.bookId!!)
                         }
@@ -276,7 +325,14 @@ fun BookViewScreen(
                         onDismiss = { showEditStatusDialog = false },
                         onSubmit = { status ->
                             book?.book?.copy(readStatusId = status.readStatusId)?.let { vm.updateBook(it) }
-                                ?: println("copy failed on read status save") //TODO: toast?
+                                ?: {
+                                    println("copy failed on read status save")
+                                    ToastError(
+                                        "copy failed - unable to update read status",
+                                        context,
+                                        coroutineScope
+                                    )
+                                }
 
                             vm.refreshBook(book?.book?.bookId!!)
                         }
@@ -290,7 +346,14 @@ fun BookViewScreen(
                         onDismiss = { showEditGenreDialog = false },
                         onSubmit = { genre ->
                             book?.book?.copy(genreId = genre.genreId)?.let { vm.updateBook(it) }
-                                ?: println("copy failed on rating save")  //TODO: toast?
+                                ?: {
+                                    println("copy failed on genre save")
+                                    ToastError(
+                                        "copy failed - unable to update genre",
+                                        context,
+                                        coroutineScope
+                                    )
+                                }
 
                             vm.refreshBook(book?.book?.bookId!!)
                         }
@@ -303,7 +366,14 @@ fun BookViewScreen(
                         onDismiss = { showEditLocationDialog = false },
                         onSubmit = { newLocation ->
                             book?.book?.copy(location = newLocation)?.let { vm.updateBook(it) }
-                                ?: println("copy failed on location save") //TODO: toast?
+                                ?: {
+                                    println("copy failed on location save")
+                                    ToastError(
+                                        "copy failed - unable to update location",
+                                        context,
+                                        coroutineScope
+                                    )
+                                }
 
                             vm.refreshBook(book?.book?.bookId!!)
                         }
