@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun SettingsScreen(
-    //navController: NavController,
     modifier: Modifier) {
     Text("This is settings screen...", modifier)
 }

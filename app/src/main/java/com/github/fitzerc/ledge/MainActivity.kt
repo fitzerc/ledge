@@ -76,12 +76,12 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
             }
             composable("settings") {
                 selectedItem = navItems.indexOfFirst { it.label == "Settings" }
-                SettingsScreen(navController, Modifier.padding(paddingInner))
+                SettingsScreen(Modifier.padding(paddingInner))
             }
             composable<SearchNavParam> { backStackEntry ->
                 selectedItem = navItems.indexOfFirst { it.label == "Books" }
                 val searchNavParam: SearchNavParam = backStackEntry.toRoute()
-                BooksScreen(navController = navController, searchNavParam = searchNavParam, ledgeDb, modifier = Modifier.padding(paddingInner))
+                BooksScreen(navController = navController, searchNavParam = searchNavParam, ledgeDb)
             }
             composable<BookNavParam> { navBackStackEntry ->
                 val bookNavParam: BookNavParam = navBackStackEntry.toRoute()
