@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
     version = 1
 )
 @TypeConverters(RoomTypeConverters::class)
-abstract class LedgeDatabase : RoomDatabase() {
+abstract class LedgeDatabase() : RoomDatabase() {
     abstract fun readStatusDao(): ReadStatusDao
     abstract fun bookFormatDao(): BookFormatDao
     abstract fun genreDao(): GenreDao
@@ -42,19 +42,23 @@ abstract class LedgeDatabase : RoomDatabase() {
     abstract fun authorDao(): AuthorDao
     abstract fun seriesDao(): SeriesDao
 
+    var dbVersion = "1-0-0"
+
     companion object {
         @Volatile
         private var INSTANCE: LedgeDatabase? = null
+        private var CUR_DB_VERSION = "1-0-0"
 
-        fun getDatabase(context: Context): LedgeDatabase {
+        fun getDatabase(context: Context, dbVersion: String = CUR_DB_VERSION): LedgeDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     LedgeDatabase::class.java,
-                    "ledge_db"
+                    "ledge_db$dbVersion"
                 )
                     .addCallback(DatabaseCallback())
                     .build()
+                instance.dbVersion = CUR_DB_VERSION
                 INSTANCE = instance
                 instance
             }
