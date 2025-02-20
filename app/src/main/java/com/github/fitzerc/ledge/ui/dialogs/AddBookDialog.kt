@@ -1,12 +1,19 @@
 package com.github.fitzerc.ledge.ui.dialogs
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +35,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.github.fitzerc.ledge.data.entities.BookFormat
 import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.entities.ReadStatus
+import com.github.fitzerc.ledge.data.models.AuthorAndGenre
 import com.github.fitzerc.ledge.ui.models.BookUiModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookDialogViewModel
 
@@ -38,11 +46,12 @@ fun AddBookDialog(
     onSubmit: (BookUiModel) -> Unit
 ) {
     var title by remember { mutableStateOf(TextFieldValue("")) }
-    var author by remember { mutableStateOf(TextFieldValue("")) }
+    var authorName by remember { mutableStateOf(TextFieldValue("")) }
 
     val genres by vm.genres.collectAsState()
     val readStatuses by vm.readStatuses.collectAsState()
     val bookFormats by vm.bookFormats.collectAsState()
+    val autoCompAuthors by vm.autoCompAuthors.collectAsState()
 
     var genresExpanded by remember { mutableStateOf(false) }
     var readStatusesExpanded by remember { mutableStateOf(false) }
@@ -55,13 +64,14 @@ fun AddBookDialog(
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
     var selectedReadStatus by remember { mutableStateOf<ReadStatus?>(null) }
     var selectedBookFormat by remember { mutableStateOf<BookFormat?>(null) }
+    val selectedAuthor = remember { mutableStateOf<AuthorAndGenre?>(null) }
 
     fun isFormValid(): Boolean {
         return selectedReadStatus != null &&
                 selectedGenre != null &&
                 selectedBookFormat != null &&
                 title.text.trim().isNotEmpty() &&
-                author.text.trim().isNotEmpty()
+                authorName.text.trim().isNotEmpty()
     }
 
     Dialog(
@@ -91,12 +101,57 @@ fun AddBookDialog(
                     label = { Text("Title") })
 
                 TextField(
-                    value = author,
-                    onValueChange = { authorName ->
-                        author = authorName
+                    value = authorName,
+                    onValueChange = { newName ->
+                        authorName = newName
+                        if (
+                            selectedAuthor.value == null ||
+                            selectedAuthor.value?.author == null ||
+                            selectedAuthor.value?.author?.fullName != newName.text
+                        ) {
+                            vm.updateAutoComp(newName.text)
+                        } else {
+                            vm.updateAutoComp("")
+                        }
+
                         isSubmitEnabled = isFormValid()
                     },
-                    label = { Text("Author") })
+                    label = { Text("Author") }
+                )
+
+                AnimatedVisibility(
+                    visible = autoCompAuthors.isNotEmpty(),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .padding(horizontal = 5.dp)
+                            .fillMaxWidth(),
+                        //.width(textFieldSize.width.dp),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        LazyColumn(modifier = Modifier
+                            .heightIn(max = 150.dp)
+                            .fillMaxWidth(),
+                            content = {
+                                items(autoCompAuthors) { author ->
+                                    println(author.author.fullName)
+                                    Text(
+                                        text = author.author.fullName,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
+                                            .clickable {
+                                                authorName = TextFieldValue(author.author.fullName)
+                                                selectedAuthor.value = author
+                                                vm.updateAutoComp("")
+                                            }
+                                    )
+                                }
+                            }
+                        )
+                    }
+                }
 
                 Box(modifier = Modifier.fillMaxWidth()) {
                     TextButton(onClick = { genresExpanded = true }) {
@@ -182,7 +237,7 @@ fun AddBookDialog(
                         if (readStatus != null && genre != null && bookFormat != null) {
                             val book = BookUiModel(
                                 title.text,
-                                author.text,
+                                authorName.text,
                                 readStatus,
                                 genre,
                                 bookFormat

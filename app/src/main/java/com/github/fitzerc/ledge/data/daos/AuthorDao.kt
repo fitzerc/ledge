@@ -23,4 +23,7 @@ interface AuthorDao {
 
     @Query("SELECT * FROM authors WHERE LOWER(full_name) = LOWER(:name) LIMIT 1")
     suspend fun getAuthorByName(name: String): AuthorAndGenre?
+
+    @Query("SELECT * FROM authors WHERE LOWER(full_name) LIKE '%' || LOWER(:searchVal) || '%'")
+    fun getAuthorFuzzyFind(searchVal: String): Flow<List<AuthorAndGenre>>
 }
