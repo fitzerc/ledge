@@ -210,21 +210,16 @@ fun BookViewScreen(
                         .fillMaxWidth()
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 4.dp),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Transparent
-                            ),
-                            contentPadding = PaddingValues(0.dp),
-                            onClick = { showInfoPopup = true }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Info,
-                                contentDescription = "Info Button"
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Info Button",
+                            modifier = Modifier.clickable { showInfoPopup = true }
+                        )
                     }
                 }
 
@@ -246,7 +241,8 @@ fun BookViewScreen(
                                     .border(width = 1.dp, color = Color.White)
                             ) {
                                 BasicText(
-                                    text = "Click a field to make a change",
+                                    text = "Click a field to make a change.\n" +
+                                            "When rating is outlined, tap star to update.",
                                     modifier = Modifier.padding(horizontal = 4.dp)
                                 )
                             }
@@ -477,7 +473,7 @@ fun BookRatingRow(
                             Icon(
                                 imageVector = Icons.Filled.Star,
                                 contentDescription = "Filled Star",
-                                tint = Color.Yellow,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clickable {
@@ -513,7 +509,7 @@ fun BookRatingRow(
                     Icon(
                         imageVector = Icons.Filled.Star,
                         contentDescription = "Filled Star",
-                        tint = Color.Yellow,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
                 } else {
