@@ -1,8 +1,10 @@
 package com.github.fitzerc.ledge.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
@@ -17,6 +20,8 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -37,6 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -161,10 +168,21 @@ fun BookViewScreen(
                     value = book?.author?.fullName ?: "N/A",
                     onEditClick = { showEditAuthorDialog = true }
                 )
-                BookDetailRow(
-                    label = "Rating",
-                    value = book?.book?.rating?.toString() ?: "N/A",
-                    onEditClick = { showEditRatingDialog = true }
+                BookRatingRow(
+                    rating = book?.book?.rating ?: 0,
+                    onChange = { rating ->
+                        book?.book?.copy(rating = rating)?.let { vm.updateBook(it) }
+                            ?: {
+                                println("copy failed on rating save")
+                                ToastError(
+                                    "copy failed - unable to update rating",
+                                    context,
+                                    coroutineScope
+                                )
+                            }
+
+                        vm.refreshBook(book?.book?.bookId!!)
+                    }
                 )
                 BookDetailRow(
                     label = "Format",
@@ -429,6 +447,81 @@ fun BookTitleRow(title: String, onEditClick: () -> Unit) {
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun BookRatingRow(
+    rating: Int,
+    onChange: (Int) -> Unit
+) {
+    var isEditable by remember { mutableStateOf(false) }
+
+        if (isEditable) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 40.dp)
+                    .clickable { isEditable = !isEditable }
+                    .border(width = 2.dp, color = Color.DarkGray, shape = RoundedCornerShape(10.dp))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 6.dp, vertical = 6.dp)
+                ) {
+                    for (i in 1..5) {
+                        if (i <= rating) {
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = "Filled Star",
+                                tint = Color.Yellow,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clickable {
+                                        onChange(i)
+                                        isEditable = false
+                                    },
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.Star,
+                                contentDescription = "Outlined Star",
+                                tint = Color.Gray,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clickable {
+                                        onChange(i)
+                                        isEditable = false
+                                    },
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 40.dp)
+                    .clickable { isEditable = !isEditable },
+            ) {
+            for (i in 1..5) {
+                if (i <= rating) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Filled Star",
+                        tint = Color.Yellow,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Outlined.Star,
+                        contentDescription = "Outlined Star",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }

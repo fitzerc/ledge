@@ -35,9 +35,10 @@ fun SettingsScreen(ledgeDb: LedgeDatabase) {
 }
 
 fun backupData(dbVersion: String, context: Context, coroutineScope: CoroutineScope) {
-    val dbPath = context.getDatabasePath("ledge_db$dbVersion").absolutePath
+    val dbName = "ledge_db$dbVersion"
+    val dbPath = context.getDatabasePath(dbName).absolutePath
     val documentsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-    val backupPath = File(documentsPath, "example_database_backup.db").absolutePath
+    val backupPath = File(documentsPath, dbName).absolutePath
 
     try {
         val inputFile = File(dbPath)
