@@ -16,14 +16,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.github.fitzerc.ledge.data.entities.Author
+import com.github.fitzerc.ledge.ui.components.AutoSuggestTextField
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModel
 
 @Composable
 fun EditAuthorDialog(
     author: Author?,
+    vm: EditAuthorDialogViewModel,
     onDismiss: () -> Unit,
     onSubmit: (authorFullName: String) -> Unit
 ) {
@@ -31,6 +35,8 @@ fun EditAuthorDialog(
         onDismiss()
         return
     }
+
+    val autoCompAuthorsNames = vm.autoCompAuthors
 
     var authorEdit by remember { mutableStateOf(author.fullName) }
     var isSubmitEnabled by remember { mutableStateOf(false) }
@@ -53,13 +59,14 @@ fun EditAuthorDialog(
                     style = MaterialTheme.typography.headlineMedium
                 )
 
-                TextField(
-                    value = authorEdit,
-                    onValueChange = { newName ->
-                        authorEdit = newName
-                        isSubmitEnabled = true
-                    },
-                    label = { Text("Full Name") }
+                AutoSuggestTextField(
+                    suggestionsStateFlow = autoCompAuthorsNames,
+                    suggestionUpdateRequested = { t -> vm.updateAutoComp(t) },
+                    initialValue = authorEdit,
+                    onValueChange = { newVal ->
+                        authorEdit = newVal
+                        isSubmitEnabled = authorEdit.isNotEmpty()
+                    }
                 )
 
                 Row(

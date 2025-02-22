@@ -36,8 +36,10 @@ import com.github.fitzerc.ledge.data.entities.BookFormat
 import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.entities.ReadStatus
 import com.github.fitzerc.ledge.data.models.AuthorAndGenre
+import com.github.fitzerc.ledge.ui.components.AutoSuggestTextField
 import com.github.fitzerc.ledge.ui.models.BookUiModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookDialogViewModel
+import kotlinx.coroutines.flow.asFlow
 
 @Composable
 fun AddBookDialog(
@@ -51,7 +53,7 @@ fun AddBookDialog(
     val genres by vm.genres.collectAsState()
     val readStatuses by vm.readStatuses.collectAsState()
     val bookFormats by vm.bookFormats.collectAsState()
-    val autoCompAuthors by vm.autoCompAuthors.collectAsState()
+    val autoCompAuthorsNames = vm.autoCompAuthors
 
     var genresExpanded by remember { mutableStateOf(false) }
     var readStatusesExpanded by remember { mutableStateOf(false) }
@@ -64,7 +66,6 @@ fun AddBookDialog(
     var selectedGenre by remember { mutableStateOf<Genre?>(null) }
     var selectedReadStatus by remember { mutableStateOf<ReadStatus?>(null) }
     var selectedBookFormat by remember { mutableStateOf<BookFormat?>(null) }
-    val selectedAuthor = remember { mutableStateOf<AuthorAndGenre?>(null) }
 
     fun isFormValid(): Boolean {
         return selectedReadStatus != null &&
@@ -100,58 +101,15 @@ fun AddBookDialog(
                     },
                     label = { Text("Title") })
 
-                TextField(
-                    value = authorName,
-                    onValueChange = { newName ->
-                        authorName = newName
-                        if (
-                            selectedAuthor.value == null ||
-                            selectedAuthor.value?.author == null ||
-                            selectedAuthor.value?.author?.fullName != newName.text
-                        ) {
-                            vm.updateAutoComp(newName.text)
-                        } else {
-                            vm.updateAutoComp("")
-                        }
-
+                AutoSuggestTextField(
+                    suggestionsStateFlow = autoCompAuthorsNames,
+                    suggestionUpdateRequested = { t -> vm.updateAutoComp(t) },
+                    initialValue = authorName.text,
+                    onValueChange = { newVal ->
+                        authorName = TextFieldValue(newVal)
                         isSubmitEnabled = isFormValid()
-                    },
-                    label = { Text("Author") }
-                )
-
-                AnimatedVisibility(
-                    visible = autoCompAuthors.isNotEmpty(),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Card(
-                        modifier = Modifier
-                            .padding(horizontal = 5.dp)
-                            .fillMaxWidth(),
-                        //.width(textFieldSize.width.dp),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        LazyColumn(modifier = Modifier
-                            .heightIn(max = 150.dp)
-                            .fillMaxWidth(),
-                            content = {
-                                items(autoCompAuthors) { author ->
-                                    println(author.author.fullName)
-                                    Text(
-                                        text = author.author.fullName,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(8.dp)
-                                            .clickable {
-                                                authorName = TextFieldValue(author.author.fullName)
-                                                selectedAuthor.value = author
-                                                vm.updateAutoComp("")
-                                            }
-                                    )
-                                }
-                            }
-                        )
                     }
-                }
+                )
 
                 Box(modifier = Modifier.fillMaxWidth()) {
                     TextButton(onClick = { genresExpanded = true }) {

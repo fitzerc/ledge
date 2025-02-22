@@ -55,6 +55,8 @@ import com.github.fitzerc.ledge.ui.dialogs.editbook.EditTitleDialog
 import com.github.fitzerc.ledge.ui.models.navparams.BookNavParam
 import com.github.fitzerc.ledge.ui.viewmodels.BookViewScreenViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.BookViewScreenViewModelFactory
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditFormatDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditFormatDialogViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditGenreDialogViewModel
@@ -109,6 +111,9 @@ fun BookViewScreen(
     )
     val editReadStatusDialogViewModel: EditReadStatusDialogViewModel = viewModel(
         factory = EditReadStatusDialogViewModelFactory(ledgeDb)
+    )
+    val editAuthorDialogViewModel: EditAuthorDialogViewModel = viewModel(
+        factory = EditAuthorDialogViewModelFactory(ledgeDb)
     )
 
     Scaffold(
@@ -263,6 +268,7 @@ fun BookViewScreen(
                 if (showEditAuthorDialog) {
                     EditAuthorDialog(
                         author = book?.author,
+                        vm = editAuthorDialogViewModel,
                         onDismiss = { showEditAuthorDialog = false },
                         onSubmit = { aFullName ->
                                 book?.book?.let {

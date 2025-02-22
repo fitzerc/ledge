@@ -24,8 +24,8 @@ class AddBookDialogViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
         private val _bookFormats = MutableStateFlow<List<BookFormat>>(emptyList())
         val bookFormats: StateFlow<List<BookFormat>> = _bookFormats
 
-        private val _autoCompAuthors = MutableStateFlow<List<AuthorAndGenre>>(emptyList())
-        val autoCompAuthors: StateFlow<List<AuthorAndGenre>> = _autoCompAuthors.asStateFlow()
+        private val _autoCompAuthorsNames = MutableStateFlow<List<String>>(emptyList())
+        val autoCompAuthors: StateFlow<List<String>> = _autoCompAuthorsNames.asStateFlow()
 
         init {
             viewModelScope.launch {
@@ -45,17 +45,17 @@ class AddBookDialogViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
             }
         }
 
-    fun updateAutoComp(searchVal: String) {
-        if (searchVal.isEmpty()) {
-            _autoCompAuthors.value = emptyList()
-        } else {
-            viewModelScope.launch {
-                ledgeDb.authorDao().getAuthorFuzzyFind(searchVal).collect { authors ->
-                    _autoCompAuthors.value = authors
+        fun updateAutoComp(searchVal: String) {
+            if (searchVal.isEmpty()) {
+                _autoCompAuthorsNames.value = emptyList()
+            } else {
+                viewModelScope.launch {
+                    ledgeDb.authorDao().getAuthorNamesFuzzyFind(searchVal).collect { authors ->
+                        _autoCompAuthorsNames.value = authors
+                    }
                 }
             }
         }
-    }
     }
 
     class AddBookViewModelFactory(private val ledgeDb: LedgeDatabase)
