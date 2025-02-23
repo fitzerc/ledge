@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.github.fitzerc.ledge.data.LedgeDatabase
+import com.github.fitzerc.ledge.data.daos.LedgeStatsDao
 import com.github.fitzerc.ledge.data.models.BookAndRelations
+import com.github.fitzerc.ledge.data.models.LedgeStatistics
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +15,17 @@ import kotlinx.coroutines.launch
 class BooksScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel() {
     private val _searchResults = MutableStateFlow<List<BookAndRelations>>(emptyList())
     val searchResults: StateFlow<List<BookAndRelations>> = _searchResults.asStateFlow()
+
+    private val _ledgeStats = MutableStateFlow<LedgeStatistics?>(null)
+    val ledgeStats: StateFlow<LedgeStatistics?> = _ledgeStats.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            ledgeDb.statsDao().getBookStatistics().collect { stats ->
+                _ledgeStats.value = stats
+            }
+        }
+    }
 
     fun getSearchBooks(searchParam: String) {
         viewModelScope.launch {

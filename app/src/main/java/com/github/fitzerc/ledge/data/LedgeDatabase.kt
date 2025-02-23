@@ -11,6 +11,7 @@ import com.github.fitzerc.ledge.data.daos.AuthorDao
 import com.github.fitzerc.ledge.data.daos.BookDao
 import com.github.fitzerc.ledge.data.daos.BookFormatDao
 import com.github.fitzerc.ledge.data.daos.GenreDao
+import com.github.fitzerc.ledge.data.daos.LedgeStatsDao
 import com.github.fitzerc.ledge.data.daos.ReadStatusDao
 import com.github.fitzerc.ledge.data.daos.SeriesDao
 import com.github.fitzerc.ledge.data.entities.Author
@@ -41,6 +42,7 @@ abstract class LedgeDatabase() : RoomDatabase() {
     abstract fun bookDao(): BookDao
     abstract fun authorDao(): AuthorDao
     abstract fun seriesDao(): SeriesDao
+    abstract fun statsDao(): LedgeStatsDao
 
     var dbVersion = "1-0-0"
 

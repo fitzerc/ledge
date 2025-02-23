@@ -226,13 +226,12 @@ fun BookViewScreen(
                         Card(
                             elevation = CardDefaults.cardElevation(4.dp),
                             shape = RoundedCornerShape(8.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .padding(8.dp)
-                                    .background(color = Color.White)
-                                    .border(width = 1.dp, color = Color.White)
+                                    .padding(10.dp)
+                                    .background(color = MaterialTheme.colorScheme.primary)
                             ) {
                                 BasicText(
                                     text = "Click a field to make a change.\n" +

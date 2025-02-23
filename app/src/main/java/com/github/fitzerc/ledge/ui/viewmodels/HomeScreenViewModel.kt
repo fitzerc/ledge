@@ -19,9 +19,6 @@ class HomeScreenViewModel(
     private val ledgeDb: LedgeDatabase,
     private val toastError: (message: String) -> Unit
 ): ViewModel() {
-    private val _bookCount = MutableStateFlow(0)
-    val bookCount: StateFlow<Int> = _bookCount.asStateFlow()
-
     private val _recentBooks = MutableStateFlow<List<BookAndRelations>>(emptyList())
     val recentBooks: StateFlow<List<BookAndRelations>> = _recentBooks.asStateFlow()
 
@@ -36,12 +33,6 @@ class HomeScreenViewModel(
     var author = MutableStateFlow<AuthorAndGenre?>(null)
 
     init {
-       viewModelScope.launch {
-           ledgeDb.bookDao().getBooksAlphaTitle().collect { books ->
-               _bookCount.value = books.count()
-           }
-       }
-
         viewModelScope.launch {
             ledgeDb.authorDao().getAuthorsAlpha().collect { authorsList ->
                 _authors.value = authorsList
