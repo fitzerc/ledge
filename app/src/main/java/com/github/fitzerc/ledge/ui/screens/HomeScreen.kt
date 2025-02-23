@@ -82,6 +82,7 @@ fun HomeScreen(
     var authorFullName: String? = null
 
     Scaffold(
+        modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
         topBar = {
             TopSearchBar(
                 searchQuery = searchQuery,
@@ -93,8 +94,7 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showDialog = true },
-                shape = RectangleShape,
-                modifier = Modifier.padding(innerPadding)
+                shape = RectangleShape
             ) {
                 Icon(
                     Icons.Filled.Add,
@@ -130,7 +130,7 @@ fun HomeScreen(
                 style = MaterialTheme.typography.titleLarge
             )
             LazyColumn(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp).padding(top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(currentlyReading) { book ->
@@ -210,7 +210,6 @@ fun TopSearchBar(searchQuery: TextFieldValue, onQueryChange: (TextFieldValue) ->
                 shape = RectangleShape,
                 onClick = { onSubmit(searchQuery.text) },
                 modifier = Modifier
-                    .padding(start = 8.dp)
                     .height(56.dp),
             ) { Icon(Icons.Default.Search, "Search Button") }
         }

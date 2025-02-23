@@ -49,7 +49,7 @@ class HomeScreenViewModel(
         }
 
         viewModelScope.launch {
-            ledgeDb.bookDao().getRecentBooksWithLimit(5).collect { books ->
+            ledgeDb.bookDao().getRecentBooksWithLimit(3).collect { books ->
                 _recentBooks.value = books
             }
         }
