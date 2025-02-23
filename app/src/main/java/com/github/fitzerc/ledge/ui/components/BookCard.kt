@@ -20,8 +20,8 @@ fun BookCard(book: BookAndRelations, onClick: (BookAndRelations) -> Unit) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = book.book.title, style = MaterialTheme.typography.headlineSmall)
-            Text(text = "Author: ${book.author.fullName}", style = MaterialTheme.typography.bodySmall)
+            Text(text = book.book.title, style = MaterialTheme.typography.titleMedium)
+            Text(text = "By: ${book.author.fullName}", style = MaterialTheme.typography.bodySmall)
         }
     }
 }
