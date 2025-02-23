@@ -2,6 +2,7 @@ package com.github.fitzerc.ledge.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import com.github.fitzerc.ledge.ui.viewmodels.dialogs.SearchFilterDialogViewMode
 
 @Composable
 fun BooksScreen(
+    innerPadding: PaddingValues,
     navController: NavController,
     searchNavParam: SearchNavParam,
     ledgeDb: LedgeDatabase) {
@@ -65,6 +67,7 @@ fun BooksScreen(
     }
 
     Scaffold(
+        modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
         topBar = {
             TopSearchAndFilterBar(
                 searchQuery = searchQuery,

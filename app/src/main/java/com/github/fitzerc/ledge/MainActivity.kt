@@ -81,7 +81,11 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
             composable<SearchNavParam> { backStackEntry ->
                 selectedItem = navItems.indexOfFirst { it.label == "Books" }
                 val searchNavParam: SearchNavParam = backStackEntry.toRoute()
-                BooksScreen(navController = navController, searchNavParam = searchNavParam, ledgeDb)
+                BooksScreen(
+                    innerPadding = paddingInner,
+                    navController = navController,
+                    searchNavParam = searchNavParam,
+                    ledgeDb = ledgeDb)
             }
             composable<BookNavParam> { navBackStackEntry ->
                 val bookNavParam: BookNavParam = navBackStackEntry.toRoute()
