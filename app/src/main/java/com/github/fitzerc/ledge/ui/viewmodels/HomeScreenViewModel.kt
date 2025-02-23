@@ -3,6 +3,7 @@ package com.github.fitzerc.ledge.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.room.Transaction
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.data.entities.Author
 import com.github.fitzerc.ledge.data.entities.Book
@@ -60,6 +61,29 @@ class HomeScreenViewModel(
         }
     }
 
+    fun createBookAndAuthor(bookUiModel: BookUiModel, author: Author) {
+        viewModelScope.launch {
+            val book = Book(
+                title = bookUiModel.title,
+                authorId = author.authorId,
+                genreId = bookUiModel.genre.genreId,
+                bookFormatId = bookUiModel.bookFormat.bookFormatId,
+                readStatusId = bookUiModel.readStatus.readStatusId
+            )
+
+            insertBookAndAuthor(book, author)
+        }
+    }
+
+    @Transaction
+    suspend fun insertBookAndAuthor(book: Book, author: Author) {
+        ledgeDb.authorDao().insertAuthor(author)
+        val savedAuthor = ledgeDb.authorDao().getAuthorByName(author.fullName)
+            ?: throw Exception("save failed")
+
+        ledgeDb.bookDao().insertBook(book.copy(authorId = savedAuthor.author.authorId))
+    }
+
     fun saveBookWithAuthorCheck(bookUiModel: BookUiModel) {
         viewModelScope.launch {
             val author = ledgeDb.authorDao().getAuthorByName(bookUiModel.author)
@@ -79,11 +103,13 @@ class HomeScreenViewModel(
         }
     }
 
+    /*
     fun saveAuthor(author: Author) {
         viewModelScope.launch {
             ledgeDb.authorDao().insertAuthor(author)
         }
     }
+    */
 }
 
 class HomeScreenViewModelFactory(

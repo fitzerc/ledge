@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
@@ -171,17 +170,25 @@ fun HomeScreen(
                     showAddAuthorDialog = false
                     authorFullName = null },
                 onSubmit = { a ->
-                    vm.saveAuthor(a)
                     if (submittedBookUiModel == null) {
                         ToastError(
-                            "somehow the book was lost - only author was saved",
+                            "somehow the book was lost - unable to save",
                             context,
                             coroutineScope
                         )
                     }
                     else {
-                        vm.saveBookWithAuthorCheck(submittedBookUiModel!!)
-                        submittedBookUiModel = null
+                        try {
+                            vm.createBookAndAuthor(submittedBookUiModel!!, a)
+                            submittedBookUiModel = null
+                        } catch (e: Exception) {
+                            println(e.message)
+                            ToastError(
+                                "something went wrong saving book or author - try again",
+                                context,
+                                coroutineScope
+                            )
+                        }
                     }
                 })
         }
