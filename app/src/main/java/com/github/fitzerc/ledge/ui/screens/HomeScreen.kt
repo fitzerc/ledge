@@ -1,5 +1,6 @@
 package com.github.fitzerc.ledge.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -68,7 +69,6 @@ fun HomeScreen(
     val addBookDialogVm: AddBookDialogViewModel = viewModel(factory = AddBookViewModelFactory(ledgeDb))
 
     var searchQuery: TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-    val count = vm.bookCount
     var showDialog by remember { mutableStateOf(false) }
     var showAddAuthorDialog by remember { mutableStateOf(false) }
     //TODO: how to do this better
@@ -105,12 +105,8 @@ fun HomeScreen(
     ) { paddingInner ->
         Column(modifier = Modifier.padding(paddingInner)) {
             Text(
-                text = "Book Count..." + count.collectAsState().value,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            Text(
                 text = "Recently Added",
-                modifier = Modifier.padding(start = 8.dp),
+                modifier = Modifier.padding(start = 8.dp, top = 8.dp),
                 style = MaterialTheme.typography.titleLarge
             )
             LazyColumn(
