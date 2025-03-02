@@ -1,16 +1,22 @@
-package com.github.fitzerc.ledge.ui.screens
+package com.github.fitzerc.ledge.ui.screens.settings
 
 import android.content.Context
 import android.os.Environment
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.ui.ToastError
 import kotlinx.coroutines.CoroutineScope
@@ -20,16 +26,23 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 @Composable
-fun SettingsScreen(ledgeDb: LedgeDatabase) {
+fun SettingsScreen(navigationController: NavController, ledgeDb: LedgeDatabase) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
+    var showAuthorDialog by remember { mutableStateOf(false) }
+
     Scaffold(modifier = Modifier.padding(horizontal = 16.dp)) { paddingInner ->
-        Button(
-            modifier = Modifier.padding(paddingInner),
-            onClick = { backupData(ledgeDb.dbVersion, context, coroutineScope) }
-        ) {
-            Text(text = "Backup Data")
+        Column(modifier = Modifier.padding(paddingInner)) {
+            Button(onClick = { showAuthorDialog = true }) {
+                Text(text = "Manage Authors")
+            }
+            Button(onClick = { navigationController.navigate("manageseries") }) {
+                Text(text = "Manage Series")
+            }
+            Button(onClick = { backupData(ledgeDb.dbVersion, context, coroutineScope) }) {
+                Text(text = "Backup Data")
+            }
         }
     }
 }

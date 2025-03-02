@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Home
@@ -35,7 +34,8 @@ import com.github.fitzerc.ledge.ui.models.navparams.SearchNavParam
 import com.github.fitzerc.ledge.ui.screens.BookViewScreen
 import com.github.fitzerc.ledge.ui.screens.BooksScreen
 import com.github.fitzerc.ledge.ui.screens.HomeScreen
-import com.github.fitzerc.ledge.ui.screens.SettingsScreen
+import com.github.fitzerc.ledge.ui.screens.settings.ManageSeriesScreen
+import com.github.fitzerc.ledge.ui.screens.settings.SettingsScreen
 import com.github.fitzerc.ledge.ui.theme.LedgeTheme
 
 class MainActivity : ComponentActivity() {
@@ -76,7 +76,7 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
             }
             composable("settings") {
                 selectedItem = navItems.indexOfFirst { it.label == "Settings" }
-                SettingsScreen(ledgeDb)
+                SettingsScreen(navController, ledgeDb)
             }
             composable<SearchNavParam> { backStackEntry ->
                 selectedItem = navItems.indexOfFirst { it.label == "Books" }
@@ -91,6 +91,14 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
                 val bookNavParam: BookNavParam = navBackStackEntry.toRoute()
                 selectedItem = -1
                 BookViewScreen(bookNavParam = bookNavParam, ledgeDb, navController)
+            }
+            composable("manageseries") {
+                selectedItem = -1
+                ManageSeriesScreen(
+                    innerPadding = paddingInner,
+                    navController = navController,
+                    ledgeDb = ledgeDb
+                )
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.github.fitzerc.ledge.ui.viewmodels
+package com.github.fitzerc.ledge.ui.viewmodels.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

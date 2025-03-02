@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
@@ -57,8 +55,8 @@ import com.github.fitzerc.ledge.ui.dialogs.editbook.EditRatingDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditReadStatusDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditTitleDialog
 import com.github.fitzerc.ledge.ui.models.navparams.BookNavParam
-import com.github.fitzerc.ledge.ui.viewmodels.BookViewScreenViewModel
-import com.github.fitzerc.ledge.ui.viewmodels.BookViewScreenViewModelFactory
+import com.github.fitzerc.ledge.ui.viewmodels.screens.BookViewScreenViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.screens.BookViewScreenViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditFormatDialogViewModel

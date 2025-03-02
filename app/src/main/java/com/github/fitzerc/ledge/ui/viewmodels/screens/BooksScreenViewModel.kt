@@ -1,10 +1,9 @@
-package com.github.fitzerc.ledge.ui.viewmodels
+package com.github.fitzerc.ledge.ui.viewmodels.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.github.fitzerc.ledge.data.LedgeDatabase
-import com.github.fitzerc.ledge.data.daos.LedgeStatsDao
 import com.github.fitzerc.ledge.data.models.BookAndRelations
 import com.github.fitzerc.ledge.data.models.LedgeStatistics
 import kotlinx.coroutines.flow.MutableStateFlow

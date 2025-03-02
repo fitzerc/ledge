@@ -47,8 +47,8 @@ import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddAuthorDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddAuthorViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookViewModelFactory
-import com.github.fitzerc.ledge.ui.viewmodels.HomeScreenViewModel
-import com.github.fitzerc.ledge.ui.viewmodels.HomeScreenViewModelFactory
+import com.github.fitzerc.ledge.ui.viewmodels.screens.HomeScreenViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.screens.HomeScreenViewModelFactory
 import java.util.Locale
 
 @Composable
