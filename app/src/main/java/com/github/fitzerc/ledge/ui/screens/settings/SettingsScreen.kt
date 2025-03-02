@@ -2,15 +2,12 @@ package com.github.fitzerc.ledge.ui.screens.settings
 
 import android.content.Context
 import android.os.Environment
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,13 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
-import com.github.fitzerc.ledge.ui.ToastError
+import com.github.fitzerc.ledge.ui.toastError
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
 import java.io.FileInputStream
@@ -105,14 +100,14 @@ fun backupData(dbVersion: String, context: Context, coroutineScope: CoroutineSco
                 }
             }
         }
-        ToastError(
+        toastError(
             "file written to: $outputFile",
             context,
             coroutineScope
         )
     } catch (e: IOException) {
         e.printStackTrace()
-        ToastError(
+        toastError(
             "backup failed",
             context,
             coroutineScope

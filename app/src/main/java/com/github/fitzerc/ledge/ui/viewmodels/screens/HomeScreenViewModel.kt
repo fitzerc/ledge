@@ -28,8 +28,6 @@ class HomeScreenViewModel(
     private val _authors = MutableStateFlow<List<AuthorAndGenre>>(emptyList())
     val authors: StateFlow<List<AuthorAndGenre>> = _authors.asStateFlow()
 
-    //private val _author = MutableStateFlow<AuthorAndGenre?>(null)
-    //val author: StateFlow<AuthorAndGenre?> = _author
     var author = MutableStateFlow<AuthorAndGenre?>(null)
 
     init {

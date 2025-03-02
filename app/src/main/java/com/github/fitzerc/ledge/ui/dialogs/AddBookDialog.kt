@@ -1,19 +1,12 @@
 package com.github.fitzerc.ledge.ui.dialogs
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -35,11 +28,9 @@ import androidx.compose.ui.window.DialogProperties
 import com.github.fitzerc.ledge.data.entities.BookFormat
 import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.entities.ReadStatus
-import com.github.fitzerc.ledge.data.models.AuthorAndGenre
 import com.github.fitzerc.ledge.ui.components.AutoSuggestTextField
 import com.github.fitzerc.ledge.ui.models.BookUiModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.AddBookDialogViewModel
-import kotlinx.coroutines.flow.asFlow
 
 @Composable
 fun AddBookDialog(

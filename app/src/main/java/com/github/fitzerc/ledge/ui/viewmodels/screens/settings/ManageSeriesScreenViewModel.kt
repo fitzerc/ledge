@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.data.entities.Series
-import com.github.fitzerc.ledge.data.models.BookAndAuthor
 import com.github.fitzerc.ledge.data.models.SeriesAndAuthor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,8 +20,6 @@ class ManageSeriesScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel
     }
 
     fun applyFilter(query: String) {
-        val seriesAndBookList: MutableList<SeriesAndBooks> = mutableListOf()
-
         viewModelScope.launch {
             ledgeDb.seriesDao().getSeriesAndAuthor(query).collect { saaList ->
                 _series.value = saaList
@@ -51,8 +48,3 @@ class ManageSeriesScreenViewModelFactory(private val ledgeDb: LedgeDatabase): Vi
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-
-data class SeriesAndBooks(
-    val series: Series,
-    val bookAndAuthorList: List<BookAndAuthor>
-)

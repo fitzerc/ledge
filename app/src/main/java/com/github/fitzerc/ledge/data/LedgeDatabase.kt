@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
     version = 1
 )
 @TypeConverters(RoomTypeConverters::class)
-abstract class LedgeDatabase() : RoomDatabase() {
+abstract class LedgeDatabase : RoomDatabase() {
     abstract fun readStatusDao(): ReadStatusDao
     abstract fun bookFormatDao(): BookFormatDao
     abstract fun genreDao(): GenreDao

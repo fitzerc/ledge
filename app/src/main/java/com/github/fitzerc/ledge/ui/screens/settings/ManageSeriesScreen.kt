@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.data.entities.Series
 import com.github.fitzerc.ledge.data.models.SeriesAndAuthor
@@ -45,7 +44,6 @@ import com.github.fitzerc.ledge.ui.viewmodels.screens.settings.ManageSeriesScree
 @Composable
 fun ManageSeriesScreen(
     innerPadding: PaddingValues,
-    navController: NavController,
     ledgeDb: LedgeDatabase
 ) {
     val vm: ManageSeriesScreenViewModel = viewModel(
@@ -69,7 +67,6 @@ fun ManageSeriesScreen(
         topBar = {
             TopSearchAndFilterBar(
                 searchQuery = searchQuery,
-                navController = navController,
                 onQueryChange = { newQuery -> searchQuery = newQuery },
                 onSubmit = { query ->
                     currentFilterValue = query
@@ -146,7 +143,7 @@ fun SeriesCard(series: SeriesAndAuthor, onClick: (SeriesAndAuthor) -> Unit) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = series.seriesName, style = MaterialTheme.typography.titleMedium)
-            if (series.authorFullName != null && series.authorFullName.isNotEmpty()) {
+            if (!series.authorFullName.isNullOrEmpty()) {
                 Text(
                     text = "By: ${series.authorFullName}",
                     style = MaterialTheme.typography.bodySmall
@@ -160,7 +157,6 @@ fun SeriesCard(series: SeriesAndAuthor, onClick: (SeriesAndAuthor) -> Unit) {
 @Composable
 fun TopSearchAndFilterBar(
     searchQuery: TextFieldValue,
-    navController: NavController,
     onQueryChange: (TextFieldValue) -> Unit, onSubmit: (String) -> Unit
 ) {
     TopAppBar(title = {

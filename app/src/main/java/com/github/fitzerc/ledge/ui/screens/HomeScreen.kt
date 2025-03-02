@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
-import com.github.fitzerc.ledge.ui.ToastError
+import com.github.fitzerc.ledge.ui.toastError
 import com.github.fitzerc.ledge.ui.components.BookCard
 import com.github.fitzerc.ledge.ui.dialogs.AddAuthorDialog
 import com.github.fitzerc.ledge.ui.dialogs.AddBookDialog
@@ -62,7 +62,7 @@ fun HomeScreen(
 
     val vm: HomeScreenViewModel = viewModel(factory = HomeScreenViewModelFactory(
         ledgeDb = ledgeDb,
-        toastError = { m -> ToastError(m, context, coroutineScope) }
+        toastError = { m -> toastError(m, context, coroutineScope) }
     ))
 
     val addAuthorDialogVm: AddAuthorDialogViewModel = viewModel(factory = AddAuthorViewModelFactory(ledgeDb))
@@ -167,7 +167,7 @@ fun HomeScreen(
                     authorFullName = null },
                 onSubmit = { a ->
                     if (submittedBookUiModel == null) {
-                        ToastError(
+                        toastError(
                             "somehow the book was lost - unable to save",
                             context,
                             coroutineScope
@@ -179,7 +179,7 @@ fun HomeScreen(
                             submittedBookUiModel = null
                         } catch (e: Exception) {
                             println(e.message)
-                            ToastError(
+                            toastError(
                                 "something went wrong saving book or author - try again",
                                 context,
                                 coroutineScope

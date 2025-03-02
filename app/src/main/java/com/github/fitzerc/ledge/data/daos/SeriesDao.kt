@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
 import com.github.fitzerc.ledge.data.entities.Series
-import com.github.fitzerc.ledge.data.models.BookAndAuthor
 import com.github.fitzerc.ledge.data.models.SeriesAndAuthor
 import kotlinx.coroutines.flow.Flow
 

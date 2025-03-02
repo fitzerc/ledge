@@ -1,6 +1,5 @@
 package com.github.fitzerc.ledge.ui.viewmodels.dialogs
 
-import androidx.compose.runtime.internal.isLiveLiteralsEnabled
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -8,7 +7,6 @@ import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.data.entities.BookFormat
 import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.entities.ReadStatus
-import com.github.fitzerc.ledge.data.models.AuthorAndGenre
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

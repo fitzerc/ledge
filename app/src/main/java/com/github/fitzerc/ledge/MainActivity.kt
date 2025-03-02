@@ -96,7 +96,6 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
                 selectedItem = -1
                 ManageSeriesScreen(
                     innerPadding = paddingInner,
-                    navController = navController,
                     ledgeDb = ledgeDb
                 )
             }

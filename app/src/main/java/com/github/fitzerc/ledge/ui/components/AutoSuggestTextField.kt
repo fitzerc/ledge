@@ -34,8 +34,6 @@ fun AutoSuggestTextField(
 
     val suggestions: List<String> by suggestionsStateFlow.collectAsState()
 
-    val isFormValid = { currentText.text.isEmpty() }
-
     TextField(
         value = currentText,
         onValueChange = { newText ->

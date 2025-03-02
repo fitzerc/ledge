@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.github.fitzerc.ledge.data.entities.Series
 import com.github.fitzerc.ledge.ui.components.AutoSuggestTextField
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookSeriesDialogViewModel
 

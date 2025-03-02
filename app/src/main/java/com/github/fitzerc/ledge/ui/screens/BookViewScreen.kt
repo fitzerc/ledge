@@ -46,7 +46,7 @@ import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
-import com.github.fitzerc.ledge.ui.ToastError
+import com.github.fitzerc.ledge.ui.toastError
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditAuthorDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditBookSeriesDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditFormatDialog
@@ -91,7 +91,7 @@ fun BookViewScreen(
     var showInfoPopup by remember { mutableStateOf(false) }
 
     if (bookNavParam.bookId == null) {
-        ToastError(
+        toastError(
             "Book Id missing - unable to display book",
             context,
             coroutineScope
@@ -104,7 +104,7 @@ fun BookViewScreen(
         factory = BookViewScreenViewModelFactory(
             ledgeDb = ledgeDb,
             bookId = bookNavParam.bookId,
-            toastError = { ToastError(it, context, coroutineScope) }
+            toastError = { toastError(it, context, coroutineScope) }
         )
     )
     val book by vm.book.collectAsState()
@@ -141,7 +141,7 @@ fun BookViewScreen(
                         book?.book?.let {
                             vm.deleteBook(it)
                             navController.navigateUp()
-                        } ?: ToastError(
+                        } ?: toastError(
                             "Internal error related to state of book - unable to delete",
                             context,
                             coroutineScope
@@ -176,7 +176,7 @@ fun BookViewScreen(
                         book?.book?.copy(rating = rating)?.let { vm.updateBook(it) }
                             ?: {
                                 println("copy failed on rating save")
-                                ToastError(
+                                toastError(
                                     "copy failed - unable to update rating",
                                     context,
                                     coroutineScope
@@ -265,7 +265,7 @@ fun BookViewScreen(
                                 book?.book?.copy(title = newTitle)?.let { vm.updateBook(it) }
                                     ?: {
                                         println("copy failed on title save")
-                                        ToastError(
+                                        toastError(
                                             "copy failed - unable to update title",
                                             context,
                                             coroutineScope
@@ -275,7 +275,7 @@ fun BookViewScreen(
                                 vm.refreshBook(book?.book?.bookId!!)
                             } else {
                                 println("empty string on title save")
-                                ToastError(
+                                toastError(
                                     "title is somehow empty - unable to update title",
                                     context,
                                     coroutineScope
@@ -294,7 +294,7 @@ fun BookViewScreen(
                                 book?.book?.let {
                                     vm.updateBookAuthor(it, aFullName)
                                     vm.refreshBook(it.bookId)
-                                } ?: ToastError(
+                                } ?: toastError(
                                     "book is somehow null - unable to update author",
                                     context,
                                     coroutineScope
@@ -311,7 +311,7 @@ fun BookViewScreen(
                             book?.book?.copy(rating = rating)?.let { vm.updateBook(it) }
                                 ?: {
                                     println("copy failed on rating save")
-                                    ToastError(
+                                    toastError(
                                         "copy failed - unable to update rating",
                                         context,
                                         coroutineScope
@@ -332,7 +332,7 @@ fun BookViewScreen(
                             book?.book?.copy(bookFormatId = format.bookFormatId)?.let { vm.updateBook(it) }
                                 ?: {
                                     println("copy failed on book format save")
-                                    ToastError(
+                                    toastError(
                                         "copy failed - unable to update book format",
                                         context,
                                         coroutineScope
@@ -353,7 +353,7 @@ fun BookViewScreen(
                             book?.book?.copy(readStatusId = status.readStatusId)?.let { vm.updateBook(it) }
                                 ?: {
                                     println("copy failed on read status save")
-                                    ToastError(
+                                    toastError(
                                         "copy failed - unable to update read status",
                                         context,
                                         coroutineScope
@@ -374,7 +374,7 @@ fun BookViewScreen(
                             book?.book?.copy(genreId = genre.genreId)?.let { vm.updateBook(it) }
                                 ?: {
                                     println("copy failed on genre save")
-                                    ToastError(
+                                    toastError(
                                         "copy failed - unable to update genre",
                                         context,
                                         coroutineScope
@@ -397,14 +397,14 @@ fun BookViewScreen(
                                     vm.updateBookWithSeries(book?.book!!, updatedSeriesName)
                                 } catch (e: Exception) {
                                     println(e.message)
-                                    ToastError(
+                                    toastError(
                                         "unable to update series",
                                         context,
                                         coroutineScope
                                     )
                                 }
                             } ?: {
-                                ToastError(
+                                toastError(
                                     "unable to update series",
                                     context,
                                     coroutineScope
@@ -423,7 +423,7 @@ fun BookViewScreen(
                             book?.book?.copy(location = newLocation)?.let { vm.updateBook(it) }
                                 ?: {
                                     println("copy failed on location save")
-                                    ToastError(
+                                    toastError(
                                         "copy failed - unable to update location",
                                         context,
                                         coroutineScope

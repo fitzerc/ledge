@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.github.fitzerc.ledge.ui.ToastError
+import com.github.fitzerc.ledge.ui.toastError
 
 @Composable
 fun EditTitleDialog(
@@ -33,7 +33,7 @@ fun EditTitleDialog(
     val coroutineScope = rememberCoroutineScope()
 
     if (title == null) {
-        ToastError(
+        toastError(
             "somehow title was lost - try again",
             context,
             coroutineScope
