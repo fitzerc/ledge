@@ -35,6 +35,12 @@ class ManageSeriesScreenViewModel(private val ledgeDb: LedgeDatabase): ViewModel
             ledgeDb.seriesDao().insertSeries(series)
         }
     }
+
+    fun updateSeries(series: Series) {
+        viewModelScope.launch {
+            ledgeDb.seriesDao().updateSeries(series)
+        }
+    }
 }
 class ManageSeriesScreenViewModelFactory(private val ledgeDb: LedgeDatabase): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

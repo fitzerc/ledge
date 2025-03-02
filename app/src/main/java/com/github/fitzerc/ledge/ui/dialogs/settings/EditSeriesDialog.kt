@@ -23,17 +23,19 @@ import androidx.compose.ui.window.DialogProperties
 import com.github.fitzerc.ledge.data.entities.Series
 
 @Composable
-fun AddSeriesDialog(
+fun EditSeriesDialog(
+    series: Series,
     onDismiss: () -> Unit,
     onSubmit: (Series) -> Unit
-){
+) {
+    var seriesName by remember { mutableStateOf(TextFieldValue(series.seriesName)) }
+    val orgSeries = series.copy()
+    var isSubmitEnabled by remember { mutableStateOf(false) }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(dismissOnClickOutside = true)
     ) {
-        var seriesName by remember { mutableStateOf(TextFieldValue("")) }
-        var isSubmitEnabled by remember { mutableStateOf(false) }
-
         Surface(
             shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colorScheme.background,
@@ -44,7 +46,7 @@ fun AddSeriesDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Add Series",
+                    text = "Edit Series",
                     style = MaterialTheme.typography.headlineMedium
                 )
 
@@ -52,16 +54,13 @@ fun AddSeriesDialog(
                     value = seriesName,
                     label = { Text("Series Name") },
                     onValueChange = { newSeriesName ->
-                        seriesName = newSeriesName
-
                         isSubmitEnabled = when {
-                            seriesName.text.isEmpty() -> {
-                                false
-                            }
-                            else -> {
-                                true
-                            }
+                            newSeriesName.text.isEmpty() -> false
+                            newSeriesName.text == orgSeries.seriesName -> false
+                            else -> true
                         }
+
+                        seriesName = newSeriesName
                     }
                 )
 
@@ -77,7 +76,7 @@ fun AddSeriesDialog(
                     TextButton(
                         enabled = isSubmitEnabled,
                         onClick = {
-                            onSubmit(Series(seriesName = seriesName.text))
+                            onSubmit(series.copy(seriesName = seriesName.text))
                             onDismiss()
                         }
                     ) {

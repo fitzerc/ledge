@@ -35,12 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
+import com.github.fitzerc.ledge.data.entities.Series
 import com.github.fitzerc.ledge.data.models.SeriesAndAuthor
 import com.github.fitzerc.ledge.ui.dialogs.settings.AddSeriesDialog
-import com.github.fitzerc.ledge.ui.models.SearchFilter
+import com.github.fitzerc.ledge.ui.dialogs.settings.EditSeriesDialog
 import com.github.fitzerc.ledge.ui.viewmodels.screens.settings.ManageSeriesScreenViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.screens.settings.ManageSeriesScreenViewModelFactory
-import com.github.fitzerc.ledge.ui.viewmodels.screens.settings.SeriesAndBooks
 
 @Composable
 fun ManageSeriesScreen(
@@ -56,7 +56,9 @@ fun ManageSeriesScreen(
 
     var showAddSeriesDialog by remember { mutableStateOf(false) }
     var showEditSeriesDialog by remember { mutableStateOf(false) }
-    var currentFilterValue: SearchFilter by remember { mutableStateOf(SearchFilter()) }
+    var currentFilterValue: String by remember { mutableStateOf("") }
+
+    var selectedSeries by remember { mutableStateOf<Series?>(null) }
 
     var searchQuery: TextFieldValue by remember {
         mutableStateOf(TextFieldValue(""))
@@ -67,8 +69,10 @@ fun ManageSeriesScreen(
         topBar = {
             TopSearchAndFilterBar(
                 searchQuery = searchQuery,
+                navController = navController,
                 onQueryChange = { newQuery -> searchQuery = newQuery },
                 onSubmit = { query ->
+                    currentFilterValue = query
                     vm.applyFilter(query)
                 }
             )
@@ -98,7 +102,14 @@ fun ManageSeriesScreen(
                     Row {
                         SeriesCard(
                             series = s,
-                            onClick = { series -> showEditSeriesDialog = true; println(series) })
+                            onClick = { series ->
+                                selectedSeries = Series(
+                                    seriesId = series.seriesId,
+                                    seriesName = series.seriesName,
+                                )
+                                showEditSeriesDialog = true
+                            }
+                        )
                     }
                 }
             }
@@ -110,6 +121,17 @@ fun ManageSeriesScreen(
                 onSubmit = {
                     s -> vm.addSeries(s)
                     vm.applyFilter(searchQuery.text)
+                }
+            )
+        }
+
+        if (showEditSeriesDialog && selectedSeries != null) {
+            EditSeriesDialog(
+                series = selectedSeries!!, //null check above
+                onDismiss = { showEditSeriesDialog = false },
+                onSubmit = { updatedSeries ->
+                    vm.updateSeries(updatedSeries)
+                    vm.applyFilter(currentFilterValue)
                 }
             )
         }
@@ -136,9 +158,18 @@ fun SeriesCard(series: SeriesAndAuthor, onClick: (SeriesAndAuthor) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopSearchAndFilterBar(searchQuery: TextFieldValue, onQueryChange: (TextFieldValue) -> Unit, onSubmit: (String) -> Unit) {
+fun TopSearchAndFilterBar(
+    searchQuery: TextFieldValue,
+    navController: NavController,
+    onQueryChange: (TextFieldValue) -> Unit, onSubmit: (String) -> Unit
+) {
     TopAppBar(title = {
-        Row(modifier = Modifier.padding(bottom = 8.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             TextField(
                 value = searchQuery,
                 onValueChange = { text -> onQueryChange(text) },

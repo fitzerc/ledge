@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.github.fitzerc.ledge.data.entities.Series
 import com.github.fitzerc.ledge.data.models.BookAndAuthor
 import com.github.fitzerc.ledge.data.models.SeriesAndAuthor
@@ -13,6 +14,9 @@ import kotlinx.coroutines.flow.Flow
 interface SeriesDao {
     @Insert
     suspend fun insertSeries(series: Series)
+
+    @Update
+    suspend fun updateSeries(series: Series)
 
     @Delete
     suspend fun deleteSeries(series: Series)
