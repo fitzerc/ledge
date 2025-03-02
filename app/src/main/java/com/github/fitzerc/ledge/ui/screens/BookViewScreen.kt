@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.ui.ToastError
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditAuthorDialog
+import com.github.fitzerc.ledge.ui.dialogs.editbook.EditBookSeriesDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditFormatDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditGenreDialog
 import com.github.fitzerc.ledge.ui.dialogs.editbook.EditLocationDialog
@@ -59,6 +60,8 @@ import com.github.fitzerc.ledge.ui.viewmodels.screens.BookViewScreenViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.screens.BookViewScreenViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModelFactory
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookSeriesDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookSeriesDialogViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditFormatDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditFormatDialogViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditGenreDialogViewModel
@@ -80,6 +83,7 @@ fun BookViewScreen(
     var showEditFormatDialog by remember { mutableStateOf(false) }
     var showEditStatusDialog by remember { mutableStateOf(false) }
     var showEditLocationDialog by remember { mutableStateOf(false) }
+    var showEditSeriesDialog by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -116,6 +120,9 @@ fun BookViewScreen(
     )
     val editAuthorDialogViewModel: EditAuthorDialogViewModel = viewModel(
         factory = EditAuthorDialogViewModelFactory(ledgeDb)
+    )
+    val editBookSeriesViewModel: EditBookSeriesDialogViewModel = viewModel(
+        factory = EditBookSeriesDialogViewModelFactory(ledgeDb)
     )
 
     Scaffold(
@@ -193,6 +200,11 @@ fun BookViewScreen(
                     label = "Genre",
                     value = book?.genre?.name ?: "N/A",
                     onEditClick = { showEditGenreDialog = true }
+                )
+                BookDetailRow(
+                    label = "Series",
+                    value = book?.partOfSeries?.seriesName ?: "Not Part of Series",
+                    onEditClick = { showEditSeriesDialog = true }
                 )
                 BookDetailRow(
                     label = "Location",
@@ -372,6 +384,35 @@ fun BookViewScreen(
                             vm.refreshBook(book?.book?.bookId!!)
                         }
                     )
+                }
+
+                if (showEditSeriesDialog) {
+                    EditBookSeriesDialog(
+                        seriesName = book?.partOfSeries?.seriesName,
+                        vm = editBookSeriesViewModel,
+                        onDismiss = { showEditSeriesDialog = false },
+                        onSubmit = { updatedSeriesName ->
+                            book?.book?.let {
+                                try {
+                                    vm.updateBookWithSeries(book?.book!!, updatedSeriesName)
+                                } catch (e: Exception) {
+                                    println(e.message)
+                                    ToastError(
+                                        "unable to update series",
+                                        context,
+                                        coroutineScope
+                                    )
+                                }
+                            } ?: {
+                                ToastError(
+                                    "unable to update series",
+                                    context,
+                                    coroutineScope
+                                )
+                            }
+
+                            vm.refreshBook(book?.book?.bookId!!)
+                        })
                 }
 
                 if (showEditLocationDialog) {

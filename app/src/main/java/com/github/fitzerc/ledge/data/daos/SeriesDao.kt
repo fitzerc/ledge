@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.github.fitzerc.ledge.data.entities.Series
 import com.github.fitzerc.ledge.data.models.BookAndAuthor
 import com.github.fitzerc.ledge.data.models.SeriesAndAuthor
@@ -18,31 +19,20 @@ interface SeriesDao {
     @Update
     suspend fun updateSeries(series: Series)
 
+    @Upsert
+    suspend fun upsertSeries(series: Series)
+
     @Delete
     suspend fun deleteSeries(series: Series)
 
     @Query("SELECT * FROM series ORDER BY series_name")
     fun getSeriesAlpha(): Flow<List<Series>>
 
-    @Query("""
-        SELECT s.*
-        FROM series s
-        LEFT OUTER JOIN books b ON b.part_of_series_id = s.series_id
-        LEFT JOIN authors a ON a.author_id = b.author_id
-        WHERE s.series_name LIKE '%' || :query || '%'
-           OR a.full_name LIKE '%' || :query || '%'
-        ORDER BY series_name
-    """)
-    fun getSeriesByQueryAlpha(query: String): Flow<List<Series>>
+    @Query("SELECT * FROM series WHERE series_name = :seriesName LIMIT 1")
+    suspend fun getSeriesByName(seriesName: String): Series?
 
-    @Query(
-        """
-        SELECT * FROM books b
-        LEFT JOIN authors a ON a.author_id = b.author_id
-        WHERE b.part_of_series_id = :seriesId
-        """
-    )
-    fun getBooksAndAuthorBySeriesId(seriesId: Int): Flow<List<BookAndAuthor>>
+    @Query("SELECT * FROM series WHERE series_name LIKE '%' || :filter || '%' ORDER BY series_name")
+    fun getFilteredSeriesAlpha(filter: String): Flow<List<Series>>
 
     @Query("""
             SELECT s.*, ba.full_name

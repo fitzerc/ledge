@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.data.entities.Book
+import com.github.fitzerc.ledge.data.entities.Series
 import com.github.fitzerc.ledge.data.models.AuthorAndGenre
 import com.github.fitzerc.ledge.data.models.BookAndRelations
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,6 +62,22 @@ class BookViewScreenViewModel(
     fun deleteBook(book: Book) {
         viewModelScope.launch {
             ledgeDb.bookDao().deleteBook(book)
+        }
+    }
+
+    fun updateBookWithSeries(book: Book, seriesName: String) {
+        viewModelScope.launch {
+            var series = ledgeDb.seriesDao().getSeriesByName(seriesName)
+            if (series == null) {
+                ledgeDb.seriesDao().updateSeries(Series(seriesName = seriesName))
+                series = ledgeDb.seriesDao().getSeriesByName(seriesName)
+            }
+
+            if (series == null) {
+                throw Exception("something went wrong - unable to add/find series")
+            }
+
+            ledgeDb.bookDao().updateBook(book.copy(partOfSeriesId = series.seriesId))
         }
     }
 }
