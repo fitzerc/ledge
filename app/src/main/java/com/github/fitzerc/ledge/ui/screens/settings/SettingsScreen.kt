@@ -13,11 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -40,10 +36,8 @@ fun SettingsScreen(navigationController: NavController, ledgeDb: LedgeDatabase) 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    var showAuthorDialog by remember { mutableStateOf(false) }
-
     val settingsOptions = listOf(
-        SettingOption("Manage Authors", onClick = { showAuthorDialog = true }),
+        SettingOption("Manage Authors", onClick = { navigationController.navigate("manageauthors") }),
         SettingOption("Manage Series", onClick = { navigationController.navigate("manageseries") }),
         SettingOption("Backup Data", onClick = { backupData(ledgeDb.dbVersion, context, coroutineScope) })
     )
@@ -54,7 +48,9 @@ fun SettingsScreen(navigationController: NavController, ledgeDb: LedgeDatabase) 
             Text(text = "Settings", style = MaterialTheme.typography.headlineMedium)
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             ) {
                 items(settingsOptions) { opt ->
                     Card(

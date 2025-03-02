@@ -20,12 +20,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.github.fitzerc.ledge.data.entities.Author
 import com.github.fitzerc.ledge.ui.components.AutoSuggestTextField
-import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookAuthorDialogViewModel
 
 @Composable
 fun EditAuthorDialog(
     author: Author?,
-    vm: EditAuthorDialogViewModel,
+    vm: EditBookAuthorDialogViewModel,
     onDismiss: () -> Unit,
     onSubmit: (authorFullName: String) -> Unit
 ) {

@@ -34,6 +34,7 @@ import com.github.fitzerc.ledge.ui.models.navparams.SearchNavParam
 import com.github.fitzerc.ledge.ui.screens.BookViewScreen
 import com.github.fitzerc.ledge.ui.screens.BooksScreen
 import com.github.fitzerc.ledge.ui.screens.HomeScreen
+import com.github.fitzerc.ledge.ui.screens.settings.ManageAuthorScreen
 import com.github.fitzerc.ledge.ui.screens.settings.ManageSeriesScreen
 import com.github.fitzerc.ledge.ui.screens.settings.SettingsScreen
 import com.github.fitzerc.ledge.ui.theme.LedgeTheme
@@ -95,6 +96,13 @@ fun MainScreen(ledgeDb: LedgeDatabase) {
             composable("manageseries") {
                 selectedItem = -1
                 ManageSeriesScreen(
+                    innerPadding = paddingInner,
+                    ledgeDb = ledgeDb
+                )
+            }
+            composable("manageauthors") {
+                selectedItem = -1
+                ManageAuthorScreen(
                     innerPadding = paddingInner,
                     ledgeDb = ledgeDb
                 )

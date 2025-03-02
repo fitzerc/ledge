@@ -76,7 +76,7 @@ fun ManageSeriesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showAddSeriesDialog = true; println("show add$$$$$$$$$$$$$$$$") }
+                onClick = { showAddSeriesDialog = true }
             ) {
                 Icon(
                     Icons.Filled.Add,

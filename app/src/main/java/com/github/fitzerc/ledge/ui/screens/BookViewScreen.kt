@@ -58,8 +58,8 @@ import com.github.fitzerc.ledge.ui.dialogs.editbook.EditTitleDialog
 import com.github.fitzerc.ledge.ui.models.navparams.BookNavParam
 import com.github.fitzerc.ledge.ui.viewmodels.screens.BookViewScreenViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.screens.BookViewScreenViewModelFactory
-import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModel
-import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditAuthorDialogViewModelFactory
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookAuthorDialogViewModel
+import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookAuthorDialogViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookSeriesDialogViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookSeriesDialogViewModelFactory
 import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditFormatDialogViewModel
@@ -118,8 +118,8 @@ fun BookViewScreen(
     val editReadStatusDialogViewModel: EditReadStatusDialogViewModel = viewModel(
         factory = EditReadStatusDialogViewModelFactory(ledgeDb)
     )
-    val editAuthorDialogViewModel: EditAuthorDialogViewModel = viewModel(
-        factory = EditAuthorDialogViewModelFactory(ledgeDb)
+    val editAuthorDialogViewModel: EditBookAuthorDialogViewModel = viewModel(
+        factory = EditBookAuthorDialogViewModelFactory(ledgeDb)
     )
     val editBookSeriesViewModel: EditBookSeriesDialogViewModel = viewModel(
         factory = EditBookSeriesDialogViewModelFactory(ledgeDb)
