@@ -82,6 +82,7 @@ fun SearchFilterDialog(
                             selectedGenres = emptyList()
                             selectedBookFormats = emptyList()
                             selectedReadStatuses = emptyList()
+                            selectedSeries = emptyList()
                         }
                     ) {
                         Text("Clear")
