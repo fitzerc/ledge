@@ -126,10 +126,20 @@ fun BooksScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                items(books) { book ->
-                    BookCard(book, onClick = {
-                        navController.navigate(BookNavParam(book.book.bookId))
-                    })
+                if (currentFilterValue.series == null || currentFilterValue.series?.isEmpty() == true) {
+                    items(books) { book ->
+                        BookCard(book, onClick = {
+                            navController.navigate(BookNavParam(book.book.bookId))
+                        })
+                    }
+                } else {
+                    items(books.filter { b ->
+                        b.partOfSeries != null && currentFilterValue.series?.contains(b.partOfSeries) == true
+                    }) { book ->
+                        BookCard(book, onClick = {
+                            navController.navigate(BookNavParam(book.book.bookId))
+                        })
+                    }
                 }
             }
 

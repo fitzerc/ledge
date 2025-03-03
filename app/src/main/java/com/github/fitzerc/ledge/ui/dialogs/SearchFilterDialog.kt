@@ -42,14 +42,17 @@ fun SearchFilterDialog(
     var selectedGenres by remember { mutableStateOf(searchFilter.genres ?: emptyList()) }
     var selectedReadStatuses by remember { mutableStateOf(searchFilter.readStatuses ?: emptyList()) }
     var selectedBookFormats by remember { mutableStateOf(searchFilter.bookFormats ?: emptyList()) }
+    var selectedSeries by remember { mutableStateOf(searchFilter.series ?: emptyList()) }
 
     val genres by vm.genres.collectAsState()
     val readStatuses by vm.readStatuses.collectAsState()
     val bookFormats by vm.bookFormats.collectAsState()
+    val series by vm.series.collectAsState()
 
     var genresExpanded by remember { mutableStateOf(false) }
     var readStatusesExpanded by remember { mutableStateOf(false) }
     var bookFormatsExpanded by remember { mutableStateOf(false) }
+    var seriesExpanded by remember { mutableStateOf(false) }
 
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -165,6 +168,46 @@ fun SearchFilterDialog(
                 }
 
                 Box(modifier = Modifier.fillMaxWidth()) {
+                    TextButton(onClick = { seriesExpanded = true }) {
+                        Text(
+                            if (selectedSeries.isEmpty()) "By Series"
+                            else "By Series (${selectedSeries.count()})"
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = seriesExpanded,
+                        onDismissRequest = { seriesExpanded = false }
+                    ) {
+                        series.forEach { s ->
+                            val isSelected = selectedSeries.contains(s)
+
+                            DropdownMenuItem(
+                                interactionSource = interactionSource,
+                                onClick = {
+                                    selectedSeries = if (isSelected) {
+                                        selectedSeries - s
+                                    } else {
+                                        selectedSeries + s
+                                    }
+                                },
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Checkbox(
+                                            checked = isSelected,
+                                            onCheckedChange = null
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(s.seriesName)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Box(modifier = Modifier.fillMaxWidth()) {
                     TextButton(onClick = { bookFormatsExpanded = true }) {
                         Text(
                             if (selectedBookFormats.isEmpty()) "By Format"
@@ -214,7 +257,7 @@ fun SearchFilterDialog(
                         Text("Cancel")
                     }
                     TextButton(enabled = isSubmitEnabled, onClick = {
-                        onSubmit(SearchFilter(selectedGenres, selectedReadStatuses, selectedBookFormats))
+                        onSubmit(SearchFilter(selectedGenres, selectedReadStatuses, selectedBookFormats, selectedSeries))
                         onDismiss()
                     })
                     {

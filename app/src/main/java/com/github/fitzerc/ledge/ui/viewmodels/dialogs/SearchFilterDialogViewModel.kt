@@ -7,6 +7,7 @@ import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.data.entities.BookFormat
 import com.github.fitzerc.ledge.data.entities.Genre
 import com.github.fitzerc.ledge.data.entities.ReadStatus
+import com.github.fitzerc.ledge.data.entities.Series
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +23,9 @@ class SearchFilterDialogViewModel(private val ledgeDb: LedgeDatabase): ViewModel
     private val _bookFormats = MutableStateFlow<List<BookFormat>>(emptyList())
     val bookFormats: StateFlow<List<BookFormat>> = _bookFormats
 
+    private val _series = MutableStateFlow<List<Series>>(emptyList())
+    val series: StateFlow<List<Series>> = _series
+
     init {
         viewModelScope.launch {
             ledgeDb.genreDao().getGenresAlpha().collect { genresList ->
@@ -36,6 +40,11 @@ class SearchFilterDialogViewModel(private val ledgeDb: LedgeDatabase): ViewModel
         viewModelScope.launch {
             ledgeDb.bookFormatDao().getBookFormatsAlpha().collect { bookFormatList ->
                 _bookFormats.value = bookFormatList
+            }
+        }
+        viewModelScope.launch {
+            ledgeDb.seriesDao().getSeriesAlpha().collect { seriesList ->
+                _series.value = seriesList
             }
         }
     }
