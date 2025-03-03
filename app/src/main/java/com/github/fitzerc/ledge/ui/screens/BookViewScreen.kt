@@ -586,7 +586,7 @@ fun BookDetailRow(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(
-                modifier = Modifier.weight(.33f)
+                modifier = Modifier.weight(.25f)
             ) {
                 Text(
                     text = "$label:",
@@ -594,28 +594,38 @@ fun BookDetailRow(
                 )
             }
 
-            Column(modifier = Modifier.weight(.67f)) {
+            Column(modifier = Modifier.weight(.75f)) {
                 if (isEditable) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = value,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        Button(onClick = onEditClick) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Edit Field"
-                            )
+                        Row (verticalAlignment = Alignment.CenterVertically) {
+                            Column(modifier = Modifier.weight(.75f)) {
+                                Text(
+                                    text = value,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            Column(modifier = Modifier.weight(.25f)) {
+                                Button(onClick = onEditClick) {
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = "Edit Field"
+                                    )
+                                }
+                            }
                         }
                     }
                 } else {
                     Text(
                         text = value,
                         style = MaterialTheme.typography.bodyLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

@@ -52,6 +52,7 @@ fun EditBookSeriesDialog(
                 )
 
                 AutoSuggestTextField(
+                    label = "Series",
                     suggestionsStateFlow = filteredSeriesNames,
                     suggestionUpdateRequested = { t -> vm.filterSeries(t) },
                     initialValue = seriesNameEdit,

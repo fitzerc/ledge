@@ -93,6 +93,7 @@ fun AddBookDialog(
                     label = { Text("Title") })
 
                 AutoSuggestTextField(
+                    label = "Author",
                     suggestionsStateFlow = autoCompAuthorsNames,
                     suggestionUpdateRequested = { t -> vm.updateAutoComp(t) },
                     initialValue = authorName.text,

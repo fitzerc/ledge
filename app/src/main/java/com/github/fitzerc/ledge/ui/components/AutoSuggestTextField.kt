@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun AutoSuggestTextField(
+    label: String,
     suggestionsStateFlow: StateFlow<List<String>>,
     suggestionUpdateRequested: (currentText: String) -> Unit,
     initialValue: String? = null,
@@ -49,7 +50,7 @@ fun AutoSuggestTextField(
 
             onValueChange(currentText.text)
         },
-        label = { Text("Author") }
+        label = { Text(label) }
     )
 
     AnimatedVisibility(

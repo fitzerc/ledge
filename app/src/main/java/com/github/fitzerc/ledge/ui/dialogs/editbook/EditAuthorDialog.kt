@@ -58,6 +58,7 @@ fun EditAuthorDialog(
                 )
 
                 AutoSuggestTextField(
+                    label = "Author",
                     suggestionsStateFlow = autoCompAuthorsNames,
                     suggestionUpdateRequested = { t -> vm.updateAutoComp(t) },
                     initialValue = authorEdit,

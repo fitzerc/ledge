@@ -36,7 +36,7 @@ interface SeriesDao {
     @Query("""
             SELECT s.*, ba.full_name
             FROM series s
-            LEFT OUTER JOIN (SELECT b.author_id, b.part_of_series_id, a.full_name FROM books b JOIN authors a ON a.author_id = b.author_id) ba ON ba.part_of_series_id = s.series_id
+            LEFT JOIN (SELECT b.author_id, b.part_of_series_id, a.full_name FROM books b JOIN authors a ON a.author_id = b.author_id LIMIT 1) ba ON ba.part_of_series_id = s.series_id
             WHERE s.series_name LIKE '%' || :query || '%'
                    OR ba.full_name LIKE '%' || :query || '%'
             ORDER BY series_name
