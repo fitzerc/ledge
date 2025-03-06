@@ -106,7 +106,6 @@ fun BooksScreen(
             }
         }
     ) { paddingInner ->
-
         Column(modifier = Modifier.padding(paddingInner)) {
             Row(
                 modifier = Modifier

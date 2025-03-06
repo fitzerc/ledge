@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.data.entities.Book
+import com.github.fitzerc.ledge.data.entities.BookFormat
+import com.github.fitzerc.ledge.data.entities.Genre
+import com.github.fitzerc.ledge.data.entities.ReadStatus
 import com.github.fitzerc.ledge.data.entities.Series
 import com.github.fitzerc.ledge.data.models.AuthorAndGenre
 import com.github.fitzerc.ledge.data.models.BookAndRelations
@@ -21,10 +24,69 @@ class BookViewScreenViewModel(
     private val _book = MutableStateFlow<BookAndRelations?>(null)
     val book: StateFlow<BookAndRelations?> = _book.asStateFlow()
 
+    private val _genres = MutableStateFlow<List<Genre>>(emptyList())
+    val genres: StateFlow<List<Genre>> = _genres.asStateFlow()
+
+    private val _readStatuses = MutableStateFlow<List<ReadStatus>>(emptyList())
+    val readStatuses: StateFlow<List<ReadStatus>> = _readStatuses.asStateFlow()
+
+    private val _formats = MutableStateFlow<List<BookFormat>>(emptyList())
+    val formats: StateFlow<List<BookFormat>> = _formats.asStateFlow()
+
+    private val _filteredAuthorNames = MutableStateFlow<List<String>>(emptyList())
+    val filteredAuthorNames: StateFlow<List<String>> = _filteredAuthorNames.asStateFlow()
+
+    private val _filteredSeriesNames = MutableStateFlow<List<String>>(emptyList())
+    val filteredSeriesNames: StateFlow<List<String>> = _filteredSeriesNames.asStateFlow()
+
     init {
         viewModelScope.launch {
             ledgeDb.bookDao().getBookById(bookId).collect { book ->
                 _book.value = book
+            }
+        }
+
+        viewModelScope.launch {
+            ledgeDb.genreDao().getGenresAlpha().collect { genreList ->
+                _genres.value = genreList
+            }
+        }
+
+        viewModelScope.launch {
+            ledgeDb.readStatusDao().getReadStatuses().collect { statusList ->
+                _readStatuses.value = statusList
+            }
+        }
+
+        viewModelScope.launch {
+            ledgeDb.bookFormatDao().getBookFormatsAlpha().collect { formatList ->
+                _formats.value = formatList
+            }
+        }
+
+        filterAuthors("")
+    }
+
+    fun filterSeries(filter: String) {
+        if (filter.isEmpty()) {
+            _filteredSeriesNames.value = emptyList()
+        }
+
+        viewModelScope.launch {
+            ledgeDb.seriesDao().getFilteredSeriesAlpha(filter).collect { seriesList ->
+                _filteredSeriesNames.value = seriesList.map { s -> s.seriesName }
+            }
+        }
+    }
+
+    fun filterAuthors(filter: String) {
+        if (filter.isEmpty()) {
+            _filteredAuthorNames.value = emptyList()
+        }
+
+        viewModelScope.launch {
+            ledgeDb.authorDao().getAuthorNamesFuzzyFind(filter).collect { authorList ->
+                _filteredAuthorNames.value = authorList
             }
         }
     }
@@ -47,6 +109,18 @@ class BookViewScreenViewModel(
             author?.let { updateBook(book.copy(authorId = it.author.authorId)) }
                 ?: run {
                     val err = "author with name: $newFullName not found, unable to update"
+                    println(err)
+                    toastError(err)
+                }
+        }
+    }
+
+    fun updateBookSeries(book: Book, newSeriesName: String) {
+        viewModelScope.launch {
+            val series = ledgeDb.seriesDao().getSeriesByName(newSeriesName)
+            series?.let { updateBook(book.copy(partOfSeriesId = series.seriesId)) }
+                ?: run {
+                    val err = "series with name: $newSeriesName not found, unable to update"
                     println(err)
                     toastError(err)
                 }
