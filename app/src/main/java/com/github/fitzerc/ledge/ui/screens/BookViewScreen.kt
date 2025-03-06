@@ -57,12 +57,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.github.fitzerc.ledge.data.LedgeDatabase
 import com.github.fitzerc.ledge.ui.toastError
-import com.github.fitzerc.ledge.ui.dialogs.editbook.EditBookSeriesDialog
 import com.github.fitzerc.ledge.ui.models.navparams.BookNavParam
 import com.github.fitzerc.ledge.ui.viewmodels.screens.BookViewScreenViewModel
 import com.github.fitzerc.ledge.ui.viewmodels.screens.BookViewScreenViewModelFactory
-import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookSeriesDialogViewModel
-import com.github.fitzerc.ledge.ui.viewmodels.dialogs.editbook.EditBookSeriesDialogViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,8 +69,6 @@ fun BookViewScreen(
     ledgeDb: LedgeDatabase,
     navController: NavController
 ) {
-    var showEditSeriesDialog by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -99,10 +94,6 @@ fun BookViewScreen(
         )
     )
     val book by vm.book.collectAsState()
-
-    val editBookSeriesViewModel: EditBookSeriesDialogViewModel = viewModel(
-        factory = EditBookSeriesDialogViewModelFactory(ledgeDb)
-    )
 
     val genres by vm.genres.collectAsState()
     val readStatuses by vm.readStatuses.collectAsState()
@@ -347,60 +338,31 @@ fun BookViewScreen(
                         )
                     }
                 }
+            }
 
-                if (showInfoPopup) {
-                    Popup(
-                        alignment = Alignment.BottomEnd,
-                        onDismissRequest = { showInfoPopup = false },
-                        offset = IntOffset(-25, -120) // Adjust the offset as needed
+            if (showInfoPopup) {
+                Popup(
+                    alignment = Alignment.BottomEnd,
+                    onDismissRequest = { showInfoPopup = false },
+                    offset = IntOffset(-25, -120) // Adjust the offset as needed
+                ) {
+                    Card(
+                        elevation = CardDefaults.cardElevation(4.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                     ) {
-                        Card(
-                            elevation = CardDefaults.cardElevation(4.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                        Box(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .background(color = MaterialTheme.colorScheme.primary)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .background(color = MaterialTheme.colorScheme.primary)
-                            ) {
-                                BasicText(
-                                    text = "Click a field to make a change.\n" +
-                                            "When rating is outlined, tap star to update.",
-                                    modifier = Modifier.padding(horizontal = 4.dp)
-                                )
-                            }
+                            BasicText(
+                                text = "Click a field to make a change.\n" +
+                                        "When rating is outlined, tap star to update.",
+                                modifier = Modifier.padding(horizontal = 4.dp)
+                            )
                         }
                     }
-                }
-
-                if (showEditSeriesDialog) {
-                    EditBookSeriesDialog(
-                        seriesName = book?.partOfSeries?.seriesName,
-                        vm = editBookSeriesViewModel,
-                        onDismiss = { showEditSeriesDialog = false },
-                        onSubmit = { updatedSeriesName ->
-                            book?.book?.let {
-                                try {
-                                    vm.updateBookWithSeries(book?.book!!, updatedSeriesName)
-                                } catch (e: Exception) {
-                                    println(e.message)
-                                    toastError(
-                                        "unable to update series",
-                                        context,
-                                        coroutineScope
-                                    )
-                                }
-                            } ?: {
-                                toastError(
-                                    "unable to update series",
-                                    context,
-                                    coroutineScope
-                                )
-                            }
-
-                            vm.refreshBook(book?.book?.bookId!!)
-                        })
                 }
             }
         }
@@ -745,13 +707,15 @@ fun BookDetailRow(
             ) {
                 Text(
                     text = "$label:",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(.25f)
                 )
                 Text(
                     text = initialValue ?: "",
                     style = MaterialTheme.typography.bodyLarge,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(.75f)
                 )
             }
         }
