@@ -1,6 +1,5 @@
 package com.github.fitzerc.ledge.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,7 +19,6 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
@@ -349,7 +347,7 @@ fun BookViewScreen(
                     Card(
                         elevation = CardDefaults.cardElevation(4.dp),
                         shape = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
                         Box(
                             modifier = Modifier
@@ -358,6 +356,8 @@ fun BookViewScreen(
                         ) {
                             BasicText(
                                 text = "Click a field to make a change.\n" +
+                                        "Author and Series require you to select an existing value.\n" +
+                                        "New value will be saved on change.\n" +
                                         "When rating is outlined, tap star to update.",
                                 modifier = Modifier.padding(horizontal = 4.dp)
                             )
@@ -623,7 +623,6 @@ fun BookDetailRowWithTextField(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailRow(
     label: String,
@@ -703,8 +702,7 @@ fun BookDetailRow(
                 .padding(horizontal = 40.dp)
                 .clickable { isEditable = !isEditable },
         ) {
-            Row(
-            ) {
+            Row {
                 Text(
                     text = "$label:",
                     style = MaterialTheme.typography.bodyLarge,
@@ -717,69 +715,6 @@ fun BookDetailRow(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(.75f)
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun BookDetailRow2(
-    label: String,
-    value: String,
-    onEditClick: () -> Unit
-) {
-    var isEditable by remember { mutableStateOf(false) }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 40.dp)
-            .clickable { isEditable = !isEditable },
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(
-                modifier = Modifier.weight(.25f)
-            ) {
-                Text(
-                    text = "$label:",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-
-            Column(modifier = Modifier.weight(.75f)) {
-                if (isEditable) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Column(modifier = Modifier.weight(.75f)) {
-                                Text(
-                                    text = value,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            Column(modifier = Modifier.weight(.25f)) {
-                                Button(onClick = onEditClick) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "Edit Field"
-                                    )
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Text(
-                        text = value,
-                        style = MaterialTheme.typography.bodyLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
             }
         }
     }
