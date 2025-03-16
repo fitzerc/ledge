@@ -1,11 +1,13 @@
 package com.github.fitzerc.ledge.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -96,7 +98,8 @@ fun BooksScreen(
             if (ledgeStats != null) {
                 FloatingActionButton(
                     onClick = { showInfoPopup = true },
-                    shape = CircleShape
+                    shape = CircleShape,
+                    contentColor = MaterialTheme.colorScheme.primary
                 ) {
                     Icon(
                         Icons.Default.Info,
@@ -160,6 +163,9 @@ fun BooksScreen(
                     Top Genre: ${ledgeStats?.topGenre}
                     Top Format: ${ledgeStats?.topFormat}
                 """.trimIndent()
+
+                val primaryColor = MaterialTheme.colorScheme.primary
+
                 Popup(
                     alignment = Alignment.Center,
                     onDismissRequest = { showInfoPopup = false },
@@ -168,17 +174,18 @@ fun BooksScreen(
                     Card(
                         elevation = CardDefaults.cardElevation(4.dp),
                         shape = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
                     ) {
                         Box(
                             modifier = Modifier
                                 .padding(10.dp)
-                                .background(color = MaterialTheme.colorScheme.primary)
+                                .background(color = MaterialTheme.colorScheme.background)
                         ) {
                             BasicText(
                                 //TODO: add most frequent author, most frequent genre, etc.
                                 //  may need to re-design UI
                                 //  could also add an Add button to the popup
+                                color = { primaryColor },
                                 text = text,
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.padding(horizontal = 4.dp)

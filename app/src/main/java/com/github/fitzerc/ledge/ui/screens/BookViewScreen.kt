@@ -339,6 +339,7 @@ fun BookViewScreen(
             }
 
             if (showInfoPopup) {
+                val primaryColor = MaterialTheme.colorScheme.primary
                 Popup(
                     alignment = Alignment.BottomEnd,
                     onDismissRequest = { showInfoPopup = false },
@@ -347,14 +348,15 @@ fun BookViewScreen(
                     Card(
                         elevation = CardDefaults.cardElevation(4.dp),
                         shape = RoundedCornerShape(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
                     ) {
                         Box(
                             modifier = Modifier
                                 .padding(10.dp)
-                                .background(color = MaterialTheme.colorScheme.primary)
+                                .background(color = MaterialTheme.colorScheme.background)
                         ) {
                             BasicText(
+                                color = { primaryColor },
                                 text = "Click a field to make a change.\n" +
                                         "Author and Series require you to select an existing value.\n" +
                                         "New value will be saved on change.\n" +
